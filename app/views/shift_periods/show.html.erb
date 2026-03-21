@@ -7,23 +7,36 @@
 
 <h2>日別データ</h2>
 
-<table>
-  <thead>
-    <tr>
-      <th>日付</th>
-      <th>曜日</th>
-      <th>種別</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @shift_period.shift_days.order(:target_date).each do |shift_day| %>
-      <tr>
-        <td><%= shift_day.target_date %></td>
-        <td><%= %w[日 月 火 水 木 金 土][shift_day.target_date.wday] %></td>
-        <td><%= shift_day.day_type %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<% @shift_period.shift_days.order(:target_date).each do |shift_day| %>
+  <hr>
+  <p>
+    <strong>日付:</strong> <%= shift_day.target_date %>
+    （<%= %w[日 月 火 水 木 金 土][shift_day.target_date.wday] %>）
+    / <strong>種別:</strong> <%= shift_day.day_type %>
+  </p>
+
+  <% if shift_day.shift_assignments.any? %>
+    <table>
+      <thead>
+        <tr>
+          <th>ユーザー</th>
+          <th>区</th>
+          <th>勤務区分</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% shift_day.shift_assignments.includes(:user).each do |assignment| %>
+          <tr>
+            <td><%= assignment.user.name %></td>
+            <td><%= assignment.zone_name %></td>
+            <td><%= assignment.work_type %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>割当はまだありません。</p>
+  <% end %>
+<% end %>
 
 <p><%= link_to "一覧へ戻る", shift_periods_path %></p>

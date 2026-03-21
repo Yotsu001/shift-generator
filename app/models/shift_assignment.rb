@@ -8,6 +8,8 @@ class ShiftAssignment < ApplicationRecord
   validates :work_type, presence: true
   validates :user_id, uniqueness: { scope: :shift_day_id }
   validate :zone_must_be_assignable_for_user
+  validate :only_one_mixed_zone_per_day
+  validate :weekend_assignment_limit
 
   private
 
@@ -16,5 +18,27 @@ class ShiftAssignment < ApplicationRecord
     return if user.zones.include?(zone)
 
     errors.add(:zone, "はこのユーザーの担当可能区ではありません")
+  end
+
+  def only_one_mixed_zone_per_day
+    return if zone.blank? || shift_day.blank?
+    return unless zone.name == "混合区"
+
+    existing_assignments = shift_day.shift_assignments.where(zone_id: zone.id).where.not(id: id)
+
+    return if existing_assignments.blank?
+
+    errors.add(:zone, "は1日1人までです")
+  end
+
+  def weekend_assignment_limit
+    return if shift_day.blank?
+    return unless shift_day.sunday?|| shift_day.saturday?
+
+    existing_count = shift_day.shift_assignments.where.not(id: id).count
+    return if existing_count < 2
+    
+    errors.add(:base, "土日 の割当は2人までです")
+    end
   end
 end

@@ -20,6 +20,7 @@ class ShiftPeriodsController < ApplicationController
 
   def show
     @shift_period = ShiftPeriod.find(params[:id])
+    @users = User.order(:name)
   end
 
   private

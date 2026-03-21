@@ -37,6 +37,29 @@
   <% else %>
     <p>割当はまだありません。</p>
   <% end %>
+
+ <h3>割当を追加する</h3>
+
+  <%= form_with model: [shift_day, ShiftAssignment.new], local: true do |f| %>
+    <div>
+      <%= f.label :user_id, "ユーザー" %><br>
+      <%= f.collection_select :user_id, @users, :id, :name, prompt: "選択してください" %>
+    </div>
+
+    <div>
+      <%= f.label :zone_name, "区名" %><br>
+      <%= f.text_field :zone_name %>
+    </div>
+
+    <div>
+      <%= f.label :work_type, "勤務区分" %><br>
+      <%= f.select :work_type, ShiftAssignment.work_types.keys.map { |k| [k, k] }, prompt: "選択してください" %>
+    </div>
+
+    <div>
+      <%= f.submit "登録する" %>
+    </div>
+  <% end %>
 <% end %>
 
 <p><%= link_to "一覧へ戻る", shift_periods_path %></p>

@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_03_21_052840) do
+ActiveRecord::Schema[7.1].define(version: 2026_03_21_073107) do
+  create_table "shift_periods", charset: "utf8mb3", force: :cascade do |t|
+    t.string "name", null: false
+    t.date "start_date", null: false
+    t.date "end_date", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["start_date", "end_date"], name: "index_shift_periods_on_start_date_and_end_date", unique: true
+  end
+
   create_table "users", charset: "utf8mb3", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false

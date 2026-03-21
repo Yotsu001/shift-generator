@@ -5,9 +5,13 @@
   <p>ようこそ、<%= current_user.name %>さん</p>
   <p><%= current_user.email %></p>
 
-  <p><%= link_to "シフト期間一覧へ", shift_periods_path %></p>
+  <p>
+    <strong>担当可能区:</strong>
+    <%= current_user.zones.order(:position).pluck(:name).join("、") %>
+  </p>
 
   <%= link_to "プロフィール編集", edit_user_registration_path %><br>
+  <%= link_to "シフト期間一覧へ", shift_periods_path %>
   <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete } %>
 <% else %>
   <p>ログインしていません</p>

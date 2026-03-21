@@ -1,2 +1,8 @@
-<h1>ShiftPeriods#show</h1>
-<p>Find me in app/views/shift_periods/show.html.erb</p>
+<h1>シフト期間詳細</h1>
+
+<p><strong>名称:</strong> <%= @shift_period.name %></p>
+<p><strong>開始日:</strong> <%= @shift_period.start_date %></p>
+<p><strong>終了日:</strong> <%= @shift_period.end_date %></p>
+<p><strong>状態:</strong> <%= @shift_period.status %></p>
+
+<p><%= link_to "一覧へ戻る", shift_periods_path %></p>

@@ -4,3 +4,4 @@ Rails.application.routes.draw do
 
   resources :shift_periods, only: [:index, :new, :create, :show] do
 end
+end

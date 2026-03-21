@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_03_21_073107) do
+ActiveRecord::Schema[7.1].define(version: 2026_03_21_080225) do
+  create_table "shift_days", charset: "utf8mb3", force: :cascade do |t|
+    t.bigint "shift_period_id", null: false
+    t.date "target_date", null: false
+    t.integer "day_type", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["shift_period_id", "target_date"], name: "index_shift_days_on_shift_period_id_and_target_date", unique: true
+    t.index ["shift_period_id"], name: "index_shift_days_on_shift_period_id"
+  end
+
   create_table "shift_periods", charset: "utf8mb3", force: :cascade do |t|
     t.string "name", null: false
     t.date "start_date", null: false
@@ -35,4 +45,5 @@ ActiveRecord::Schema[7.1].define(version: 2026_03_21_073107) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "shift_days", "shift_periods"
 end

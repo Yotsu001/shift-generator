@@ -5,4 +5,25 @@
 <p><strong>終了日:</strong> <%= @shift_period.end_date %></p>
 <p><strong>状態:</strong> <%= @shift_period.status %></p>
 
+<h2>日別データ</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>日付</th>
+      <th>曜日</th>
+      <th>種別</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @shift_period.shift_days.order(:target_date).each do |shift_day| %>
+      <tr>
+        <td><%= shift_day.target_date %></td>
+        <td><%= %w[日 月 火 水 木 金 土][shift_day.target_date.wday] %></td>
+        <td><%= shift_day.day_type %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
 <p><%= link_to "一覧へ戻る", shift_periods_path %></p>

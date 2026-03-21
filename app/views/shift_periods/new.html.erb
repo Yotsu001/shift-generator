@@ -1,0 +1,39 @@
+<h1>シフト期間作成</h1>
+
+<%= form_with model: @shift_period, local: true do |f| %>
+  <% if @shift_period.errors.any? %>
+    <div>
+      <ul>
+        <% @shift_period.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :name, "名称" %><br>
+    <%= f.text_field :name %>
+  </div>
+
+  <div>
+    <%= f.label :start_date, "開始日" %><br>
+    <%= f.date_field :start_date %>
+  </div>
+
+  <div>
+    <%= f.label :end_date, "終了日" %><br>
+    <%= f.date_field :end_date %>
+  </div>
+
+  <div>
+    <%= f.label :status, "状態" %><br>
+    <%= f.select :status, ShiftPeriod.statuses.keys.map { |k| [k, k] } %>
+  </div>
+
+  <div>
+    <%= f.submit "作成する" %>
+  </div>
+<% end %>
+
+<p><%= link_to "一覧へ戻る", shift_periods_path %></p>

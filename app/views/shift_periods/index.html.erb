@@ -1,0 +1,26 @@
+<h1>シフト期間一覧</h1>
+
+<p><%= link_to "新しいシフト期間を作成", new_shift_period_path %></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>名称</th>
+      <th>開始日</th>
+      <th>終了日</th>
+      <th>状態</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @shift_periods.each do |shift_period| %>
+      <tr>
+        <td><%= shift_period.name %></td>
+        <td><%= shift_period.start_date %></td>
+        <td><%= shift_period.end_date %></td>
+        <td><%= shift_period.status %></td>
+        <td><%= link_to "詳細", shift_period_path(shift_period) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

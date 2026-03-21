@@ -26,7 +26,7 @@
 ### Indexes
 - unique index on `:code`
 
-#### Association
+### Association
 - has_many :assignments
 - has_many :leave_requests
 - has_many :employee_zone_preferences
@@ -45,7 +45,7 @@
 ### Indexes
 - unique index on `:code`
 
-#### Association
+### Association
 - has_many :assignments
 - has_many :employee_zone_preferences
 
@@ -62,7 +62,7 @@
 ### Indexes
 - index on `[:start_date, :end_date]`
 
-#### Association
+### Association
 - belongs_to :created_by, class_name: "User"
 - has_many :shift_days
 
@@ -78,7 +78,7 @@
 ### Indexes
 - unique index on `[:shift_period_id, :target_date]`
 
-#### Association
+### Association
 - belongs_to :shift_period
 - has_many :assignments
 
@@ -97,7 +97,7 @@
 ### Indexes
 - unique index on `[:shift_day_id, :employee_id]`
 
-#### Association
+### Association
 - belongs_to :shift_day
 - belongs_to :employee
 - belongs_to :zone
@@ -115,7 +115,7 @@
 ### Indexes
 - unique index on `[:employee_id, request_date]`
 
-#### Association
+### Association
 - belongs_to :employee
 
 ## employee_zone_preferences テーブル
@@ -130,6 +130,6 @@
 ### Indexes
 - unique index on `[:employee_id, zone_id]`
 
-#### Association
+### Association
 - belongs_to :employee
 - belongs_to :zone

@@ -21,6 +21,7 @@ class ShiftPeriodsController < ApplicationController
   def show
     @shift_period = ShiftPeriod.find(params[:id])
     @users = User.order(:name)
+    @zones = Zone.active_ordered
   end
 
   private

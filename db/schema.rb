@@ -10,15 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_03_21_100031) do
+ActiveRecord::Schema[7.1].define(version: 2026_03_21_130347) do
   create_table "shift_assignments", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "shift_day_id", null: false
     t.bigint "user_id", null: false
-    t.string "zone_name", null: false
     t.integer "work_type", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "zone_id"
+    t.bigint "zone_id", null: false
     t.index ["shift_day_id", "user_id"], name: "index_shift_assignments_on_shift_day_id_and_user_id", unique: true
     t.index ["shift_day_id"], name: "index_shift_assignments_on_shift_day_id"
     t.index ["user_id"], name: "index_shift_assignments_on_user_id"

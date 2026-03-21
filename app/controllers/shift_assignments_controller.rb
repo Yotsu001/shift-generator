@@ -15,7 +15,7 @@ class ShiftAssignmentsController < ApplicationController
   def destroy
     @shift_assignment = @shift_day.shift_assignments.find(params[:id])
     @shift_assignment.destroy
-    
+
     redirect_to shift_period_path(@shift_day.shift_period), notice: "割当を削除しました"
   end
 
@@ -26,6 +26,6 @@ class ShiftAssignmentsController < ApplicationController
   end
 
   def shift_assignment_params
-    params.require(:shift_assignment).permit(:user_id, :zone_name, :work_type)
+    params.require(:shift_assignment).permit(:user_id, :zone_id, :work_type)
   end
 end

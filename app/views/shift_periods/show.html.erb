@@ -25,10 +25,10 @@
         </tr>
       </thead>
       <tbody>
-        <% shift_day.shift_assignments.includes(:user).each do |assignment| %>
+        <% shift_day.shift_assignments.includes(:user, :zone).each do |assignment| %>
           <tr>
             <td><%= assignment.user.name %></td>
-            <td><%= assignment.zone_name %></td>
+            <td><%= assignment.zone.name %></td>
             <td><%= assignment.work_type %></td>
           </tr>
         <% end %>
@@ -47,8 +47,8 @@
     </div>
 
     <div>
-      <%= f.label :zone_name, "区名" %><br>
-      <%= f.text_field :zone_name %>
+      <%= f.label :zone_id, "区" %><br>
+      <%= f.collection_select :zone_id, @zones, :id, :name, prompt: "選択してください" %>
     </div>
 
     <div>

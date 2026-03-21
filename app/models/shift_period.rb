@@ -8,6 +8,8 @@ class ShiftPeriod < ApplicationRecord
   validates :end_date, presence: true
   validate :end_date_after_start_date
 
+  after_create :generate_shift_days
+
   private
 
   def end_date_after_start_date
@@ -15,5 +17,24 @@ class ShiftPeriod < ApplicationRecord
     return if end_date >= start_date
 
     errors.add(:end_date, "は開始日以降の日付を選択してください")
+  end
+
+  def generate_shift_days
+    (start_date..end_date).each do |date|
+      shift_days.create!(
+        target_date: date,
+        day_type: detect_day_type(date))
+    end
+  end
+
+  def detect_day_type(date)
+    case date.wday
+    when 0
+      :sunday
+    when 6
+      :saturday
+    else
+      :weekday
+    end
   end
 end

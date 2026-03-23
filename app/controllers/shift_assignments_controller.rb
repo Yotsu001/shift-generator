@@ -5,8 +5,12 @@ class ShiftAssignmentsController < ApplicationController
   def create
     @shift_assignment = @shift_day.shift_assignments.new(shift_assignment_params)
 
+    if @shift_assignment.zone.present?
+      @shift_assignment.zone_id = @shift_assignment.zone.id
+    end
+
     if @shift_assignment.save
-      redirect_to shift_period_path(@shift_day.shift_period), notice: "割当を登録しました"
+      redirect_to shift_period_path(@shift_day.shift_period), notice: "割当を登録しました。"
     else
       redirect_to shift_period_path(@shift_day.shift_period), alert: @shift_assignment.errors.full_messages.join(", ")
     end
@@ -16,7 +20,7 @@ class ShiftAssignmentsController < ApplicationController
     @shift_assignment = @shift_day.shift_assignments.find(params[:id])
     @shift_assignment.destroy
 
-    redirect_to shift_period_path(@shift_day.shift_period), notice: "割当を削除しました"
+    redirect_to shift_period_path(@shift_day.shift_period), notice: "割当を削除しました。"
   end
 
   private

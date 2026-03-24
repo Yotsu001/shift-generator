@@ -38,7 +38,7 @@
     <p>割当はまだありません。</p>
   <% end %>
 
- <h3>割当を追加する</h3>
+  <h3>割当を追加する</h3>
 
   <%= form_with model: [shift_day, ShiftAssignment.new], local: true do |f| %>
     <div>
@@ -58,6 +58,54 @@
 
     <div>
       <%= f.submit "登録する" %>
+    </div>
+  <% end %>
+
+  <h3>希望休</h3>
+
+  <% if shift_day.leave_requests.any? %>
+    <table>
+      <thead>
+        <tr>
+          <th>ユーザー</th>
+          <th>メモ</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% shift_day.leave_requests.includes(:user).each do |leave_request| %>
+          <tr>
+            <td><%= leave_request.user.name %></td>
+            <td><%= leave_request.note %></td>
+            <td>
+              <%= button_to "削除",
+                  shift_day_leave_request_path(shift_day, leave_request),
+                  method: :delete,
+                  data: { turbo_confirm: "この希望休を削除しますか？" } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>希望休はまだありません。</p>
+  <% end %>
+
+  <h3>希望休を追加する</h3>
+
+  <%= form_with model: [shift_day, LeaveRequest.new], local: true do |f| %>
+    <div>
+      <%= f.label :user_id, "ユーザー" %><br>
+      <%= f.collection_select :user_id, @users, :id, :name, prompt: "選択してください" %>
+    </div>
+
+    <div>
+      <%= f.label :note, "メモ" %><br>
+      <%= f.text_field :note %>
+    </div>
+
+    <div>
+      <%= f.submit "希望休を登録する" %>
     </div>
   <% end %>
 <% end %>

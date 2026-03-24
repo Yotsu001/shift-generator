@@ -12,6 +12,7 @@ class ShiftAssignment < ApplicationRecord
   validate :zone_must_be_assignable_for_user
   validate :only_one_mixed_zone_per_day
   validate :weekend_work_type_limit
+  validate :cannot_assign_if_leave_requested
 
   private
 
@@ -61,6 +62,14 @@ class ShiftAssignment < ApplicationRecord
       errors.add(:work_type, "の日勤は土日1人までです")
     elsif night_shift?
       errors.add(:work_type, "の夜勤は土日1人までです")
+    end
+  end
+
+  def cannot_assign_if_leave_requested
+    return if user.blank? || shift_day.blank?
+
+    if LeaveRequest.exists?(user_id: user_id, shift_day_id: shift_day_id)
+      errors.add(:base, "希望休が登録されているため勤務を登録できません")
     end
   end
 end

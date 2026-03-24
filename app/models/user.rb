@@ -7,6 +7,7 @@ class User < ApplicationRecord
     has_many :shift_assignments, dependent: :destroy
     has_many :user_zones, dependent: :destroy
     has_many :zones, through: :user_zones
+    has_many :leave_requests, dependent: :destroy
 
   validates :name, presence: true
 end

@@ -10,7 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_03_23_003236) do
+ActiveRecord::Schema[7.1].define(version: 2026_03_24_001920) do
+  create_table "leave_requests", charset: "utf8mb3", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "shift_day_id", null: false
+    t.string "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["shift_day_id"], name: "index_leave_requests_on_shift_day_id"
+    t.index ["user_id", "shift_day_id"], name: "index_leave_requests_on_user_id_and_shift_day_id", unique: true
+    t.index ["user_id"], name: "index_leave_requests_on_user_id"
+  end
+
   create_table "shift_assignments", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "shift_day_id", null: false
     t.bigint "user_id", null: false
@@ -78,6 +89,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_03_23_003236) do
     t.index ["position"], name: "index_zones_on_position"
   end
 
+  add_foreign_key "leave_requests", "shift_days"
+  add_foreign_key "leave_requests", "users"
   add_foreign_key "shift_assignments", "shift_days"
   add_foreign_key "shift_assignments", "users"
   add_foreign_key "shift_assignments", "zones"

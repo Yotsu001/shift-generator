@@ -223,3 +223,123 @@
 .sunday-column {
   background-image: linear-gradient(rgba(254, 226, 226, 0.4), rgba(254, 226, 226, 0.4));
 }
+
+.action-button {
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.action-button-primary {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+.action-button-secondary {
+  background-color: #f59e0b;
+  color: #ffffff;
+}
+
+.action-button-edit {
+  background-color: #6b7280;
+  color: #ffffff;
+}
+
+.cell-action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.compact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.compact-form label {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.compact-form select,
+.compact-form input[type="text"] {
+  width: 100%;
+  max-width: 160px;
+  padding: 4px 6px;
+  font-size: 12px;
+  box-sizing: border-box;
+}
+
+.compact-form input[type="submit"] {
+  width: 100%;
+  max-width: 160px;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 6px;
+  background-color: #111827;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.toggle-form {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #d1d5db;
+}
+
+.shift-cell {
+  min-width: 180px;
+  vertical-align: top;
+}
+
+.shift-zone-name {
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.hidden {
+  display: none;
+}
+
+.shift-table {
+  font-size: 13px;
+}
+
+.shift-table th {
+  text-align: center;
+}
+
+.shift-table td {
+  text-align: left;
+}
+
+.flash-wrapper {
+  margin: 16px;
+}
+
+.flash-message {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.flash-notice {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #10b981;
+}
+
+.flash-alert {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #ef4444;
+}

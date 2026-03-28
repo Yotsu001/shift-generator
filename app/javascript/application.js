@@ -2,3 +2,4 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 import "shift_assignment_form"
+import "toggle_shift_cell_forms"

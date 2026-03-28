@@ -52,3 +52,21 @@
 .sunday-header {
   background-color: #fee2e2;
 }
+
+.hidden {
+  display: none;
+}
+
+.cell-action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.toggle-form {
+  margin-top: 8px;
+}
+
+.toggle-button {
+  cursor: pointer;
+}

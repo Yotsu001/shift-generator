@@ -26,6 +26,12 @@ class ShiftDay < ApplicationRecord
     shift_assignments.find_by(user_id: user.id)
   end
 
+  def leave_request_for(user)
+    return nil if user.blank?
+
+    leave_requests.find_by(user_id: user.id)
+  end
+
   def assignable_for?(user)
     return false if user.blank?
     return false if leave_requested_by?(user)

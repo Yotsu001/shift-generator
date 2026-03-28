@@ -13,6 +13,7 @@ class ShiftAssignmentsController < ApplicationController
   end
 
   def destroy
+    @shift_day = ShiftDay.find(params[:shift_day_id])
     @shift_assignment = @shift_day.shift_assignments.find(params[:id])
     @shift_assignment.destroy
 

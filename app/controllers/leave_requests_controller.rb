@@ -13,6 +13,7 @@ class LeaveRequestsController < ApplicationController
   end
 
   def destroy
+    @shift_day = ShiftDay.find(params[:shift_day_id])
     @leave_request = @shift_day.leave_requests.find(params[:id])
     @leave_request.destroy
 

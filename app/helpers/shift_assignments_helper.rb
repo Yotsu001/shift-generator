@@ -13,4 +13,19 @@ module ShiftAssignmentsHelper
       work_type
     end
   end
+
+  def day_type_label(day_type)
+    case day_type
+    when "weekday"
+      "平日"
+    when "saturday"
+      "土曜"
+    when "sunday"
+      "日曜"
+    when "holiday"
+      "祝日"
+    else
+      day_type
+    end
+  end
 end

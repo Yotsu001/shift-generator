@@ -70,3 +70,109 @@
 .toggle-button {
   cursor: pointer;
 }
+
+.shift-table-wrapper {
+  overflow-x: auto;
+  max-width: 100%;
+  border: 1px solid #ccc;
+}
+
+.shift-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: max-content;
+  min-width: 100%;
+}
+
+.shift-table th,
+.shift-table td {
+  border-right: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  padding: 8px;
+  background-clip: padding-box;
+}
+
+.shift-header-user {
+  min-width: 120px;
+}
+
+.shift-header-day {
+  min-width: 180px;
+}
+
+.shift-cell {
+  min-width: 180px;
+  vertical-align: top;
+}
+
+.shift-sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background-color: #fff;
+}
+
+.shift-sticky-left {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background-color: #fff;
+}
+
+.shift-corner-cell {
+  z-index: 30;
+}
+
+.user-name-cell {
+  font-weight: bold;
+}
+
+.saturday-header {
+  background-color: #dbeafe;
+}
+
+.sunday-header {
+  background-color: #fee2e2;
+}
+
+.leave-request-cell {
+  background-color: #fff3cd;
+}
+
+.working-cell {
+  background-color: #dbeafe;
+}
+
+.holiday-cell {
+  background-color: #e5e7eb;
+}
+
+.empty-cell {
+  background-color: #ffffff;
+}
+
+.hidden {
+  display: none;
+}
+
+.cell-action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.toggle-form {
+  margin-top: 8px;
+}
+
+.toggle-button {
+  cursor: pointer;
+}
+
+.shift-cell p {
+  margin: 0 0 6px 0;
+}
+
+.shift-cell strong {
+  font-size: 14px;
+}

@@ -28,4 +28,19 @@ module ShiftAssignmentsHelper
       day_type
     end
   end
+
+  def work_type_badge_class(work_type)
+    case work_type
+    when "day_shift"
+      "shift-badge shift-badge-day"
+    when "night_shift"
+      "shift-badge shift-badge-night"
+    when "off_duty"
+      "shift-badge shift-badge-off-duty"
+    when "holiday"
+      "shift-badge shift-badge-holiday"
+    else
+      "shift-badge"
+    end
+  end
 end

@@ -57,7 +57,9 @@
 
             <td class="<%= cell_class %>">
               <% if leave_request.present? %>
-                <p><strong>希望休</strong></p>
+                <p>
+                  <span class="shift-badge shift-badge-leave-request">希望休</span>
+                </p>
                 <% if leave_request.note.present? %>
                   <p>メモ: <%= leave_request.note %></p>
                 <% end %>
@@ -89,10 +91,14 @@
                 </div>
 
               <% elsif assignment.present? %>
-                <p><strong><%= work_type_label(assignment.work_type) %></strong></p>
+                <p>
+                  <span class="<%= work_type_badge_class(assignment.work_type) %>">
+                    <%= work_type_label(assignment.work_type) %>
+                  </span>
+                </p>
 
                 <% if assignment.zone.present? %>
-                  <p>区: <%= assignment.zone.name %></p>
+                  <p class="shift-zone-name"><%= assignment.zone.name %></p>
                 <% end %>
 
                 <div class="cell-action-buttons">

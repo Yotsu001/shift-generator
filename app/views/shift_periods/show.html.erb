@@ -129,9 +129,9 @@
                     <div>
                       <%= f.label :work_type, "勤務区分" %><br>
                       <%= f.select :work_type,
-                          [["日勤", "day_shift"], ["夜勤", "night_shift"], ["非番", "off_duty"], ["休日", "holiday"]],
-                          { prompt: "選択してください" },
-                          { class: "work-type-select" } %>
+                      work_type_options,
+                      { prompt: "選択してください" },
+                      { class: "work-type-select" } %>
                     </div>
 
                     <div class="zone-field">

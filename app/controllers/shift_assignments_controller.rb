@@ -12,6 +12,16 @@ class ShiftAssignmentsController < ApplicationController
     end
   end
 
+  def update
+    @shift_assignment = @shift_day.shift_assignments.find(params[:id])
+
+    if @shift_assignment.update(shift_assignment_params)
+      redirect_to shift_period_path(@shift_day.shift_period), notice: "割当を更新しました。"
+    else
+      redirect_to shift_period_path(@shift_day.shift_period), alert: @shift_assignment.errors.full_messages.join(", ")
+    end
+  end
+
   def destroy
     @shift_day = ShiftDay.find(params[:shift_day_id])
     @shift_assignment = @shift_day.shift_assignments.find(params[:id])

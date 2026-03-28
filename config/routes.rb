@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   resources :shift_periods, only: [:index, :new, :create, :show]
   
   resources :shift_days, only: [] do
-    resources :shift_assignments, only: [:create, :destroy]
-    resources :leave_requests, only: [:create, :destroy]
+    resources :shift_assignments, only: [:create, :edit, :update, :destroy]
+    resources :leave_requests, only: [:create, :edit, :update, :destroy]
   end
 end

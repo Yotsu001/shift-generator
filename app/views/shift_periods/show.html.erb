@@ -61,10 +61,31 @@
                 <p>メモ: <%= leave_request.note %></p>
               <% end %>
 
-              <%= button_to "希望休削除",
-                  shift_day_leave_request_path(shift_day, leave_request),
-                  method: :delete,
-                  data: { turbo_confirm: "この希望休を削除しますか？" } %>
+              <div class="cell-action-buttons">
+                <button type="button" class="toggle-button" data-target="edit-leave-form-<%= leave_request.id %>">
+                  編集
+                </button>
+
+                <%= button_to "希望休削除",
+                    shift_day_leave_request_path(shift_day, leave_request),
+                    method: :delete,
+                    data: { turbo_confirm: "この希望休を削除しますか？" } %>
+              </div>
+
+              <div id="edit-leave-form-<%= leave_request.id %>" class="toggle-form hidden">
+                <%= form_with model: [shift_day, leave_request], local: true, html: { class: "shift-assignment-form" } do |f| %>
+                  <%= f.hidden_field :user_id, value: user.id %>
+
+                  <div>
+                    <%= f.label :note, "希望休メモ" %><br>
+                    <%= f.text_field :note %>
+                  </div>
+
+                  <div style="margin-top: 8px;">
+                    <%= f.submit "更新する" %>
+                  </div>
+                <% end %>
+              </div>
 
             <% elsif assignment.present? %>
               <p><strong><%= work_type_label(assignment.work_type) %></strong></p>
@@ -73,10 +94,44 @@
                 <p>区: <%= assignment.zone.name %></p>
               <% end %>
 
-              <%= button_to "割当削除",
-                  shift_day_shift_assignment_path(shift_day, assignment),
-                  method: :delete,
-                  data: { turbo_confirm: "この割当を削除しますか？" } %>
+              <div class="cell-action-buttons">
+                <button type="button" class="toggle-button" data-target="edit-assignment-form-<%= assignment.id %>">
+                  編集
+                </button>
+
+                <%= button_to "割当削除",
+                    shift_day_shift_assignment_path(shift_day, assignment),
+                    method: :delete,
+                    data: { turbo_confirm: "この割当を削除しますか？" } %>
+              </div>
+
+              <div id="edit-assignment-form-<%= assignment.id %>" class="toggle-form hidden">
+                <%= form_with model: [shift_day, assignment], local: true, html: { class: "shift-assignment-form" } do |f| %>
+                  <%= f.hidden_field :user_id, value: user.id %>
+
+                  <div>
+                    <%= f.label :work_type, "勤務区分" %><br>
+                    <%= f.select :work_type,
+                        [["日勤", "day_shift"], ["夜勤", "night_shift"], ["非番", "off_duty"], ["休日", "holiday"]],
+                        { prompt: "選択してください" },
+                        { class: "work-type-select" } %>
+                  </div>
+
+                  <div class="zone-field">
+                    <%= f.label :zone_id, "区" %><br>
+                    <%= f.collection_select :zone_id,
+                        user.zones.order(:position),
+                        :id,
+                        :name,
+                        { prompt: "休みの場合は未選択" },
+                        { class: "zone-select" } %>
+                  </div>
+
+                  <div style="margin-top: 8px;">
+                    <%= f.submit "更新する" %>
+                  </div>
+                <% end %>
+              </div>
 
             <% else %>
               <div class="cell-action-buttons">

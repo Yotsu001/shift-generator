@@ -5,109 +5,81 @@
 <p><strong>終了日:</strong> <%= @shift_period.end_date %></p>
 <p><strong>状態:</strong> <%= @shift_period.status %></p>
 
-<h2>日別データ</h2>
+<h2>シフト表</h2>
 
-<% @shift_period.shift_days.order(:target_date).each do |shift_day| %>
-  <hr>
-  <p>
-    <strong>日付:</strong> <%= shift_day.target_date %>
-    （<%= %w[日 月 火 水 木 金 土][shift_day.target_date.wday] %>）
-    / <strong>種別:</strong> <%= shift_day.day_type %>
-  </p>
+<table border="1" style="border-collapse: collapse;">
+  <thead>
+    <tr>
+      <th>ユーザー</th>
+      <% @shift_days.each do |shift_day| %>
+        <th>
+          <%= shift_day.target_date.strftime("%-m/%-d") %><br>
+          （<%= %w[日 月 火 水 木 金 土][shift_day.target_date.wday] %>）<br>
+          <%= shift_day.day_type %>
+        </th>
+      <% end %>
+    </tr>
+  </thead>
 
-  <% if shift_day.shift_assignments.any? %>
-    <table>
-      <thead>
-        <tr>
-          <th>ユーザー</th>
-          <th>区</th>
-          <th>勤務区分</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% shift_day.shift_assignments.includes(:user, :zone).each do |assignment| %>
-          <tr>
-            <td><%= assignment.user.name %></td>
-            <td><%= assignment.zone_id %></td>
-            <td><%= assignment.work_type %></td>
-          </tr>
+  <tbody>
+    <% @users.each do |user| %>
+      <tr>
+        <th><%= user.name %></th>
+
+        <% @shift_days.each do |shift_day| %>
+          <% assignment = shift_day.assignment_for(user) %>
+
+          <td style="vertical-align: top; min-width: 140px;">
+            <% if shift_day.leave_requested_by?(user) %>
+              <p>希望休</p>
+
+            <% elsif assignment.present? %>
+              <p><strong><%= work_type_label(assignment.work_type) %></strong></p>
+              <% if assignment.zone.present? %>
+                <p><%= assignment.zone.name %></p>
+              <% end %>
+
+            <% else %>
+              <%= form_with model: [shift_day, ShiftAssignment.new], local: true do |f| %>
+                <%= f.hidden_field :user_id, value: user.id %>
+
+                <div>
+                  <%= f.label :work_type, "勤務区分" %><br>
+                  <%= f.select :work_type,
+                      [["日勤", "day_shift"], ["夜勤", "night_shift"], ["非番", "off_duty"], ["休日", "holiday"]],
+                      prompt: "選択" %>
+                </div>
+
+                <div>
+                  <%= f.label :zone_id, "区" %><br>
+                  <%= f.collection_select :zone_id, user.zones.order(:position), :id, :name, include_blank: "休みは未選択" %>
+                </div>
+
+                <div>
+                  <%= f.submit "登録" %>
+                </div>
+              <% end %>
+
+              <hr>
+
+              <%= form_with model: [shift_day, LeaveRequest.new], local: true do |f| %>
+                <%= f.hidden_field :user_id, value: user.id %>
+
+                <div>
+                  <%= f.label :note, "希望休メモ" %><br>
+                  <%= f.text_field :note %>
+                </div>
+
+                <div>
+                  <%= f.submit "希望休" %>
+                </div>
+              <% end %>
+            <% end %>
+          </td>
         <% end %>
-      </tbody>
-    </table>
-  <% else %>
-    <p>割当はまだありません。</p>
-  <% end %>
-
-  <h3>割当を追加する</h3>
-
-  <%= form_with model: [shift_day, ShiftAssignment.new], local: true do |f| %>
-    <div>
-      <%= f.label :user_id, "ユーザー" %><br>
-      <%= f.collection_select :user_id, @users, :id, :name, prompt: "選択してください" %>
-    </div>
-
-    <div>
-      <%= f.label :zone_id, "区" %><br>
-      <%= f.collection_select :zone_id, @zones, :id, :name, prompt: "休みの場合は未選択" %>
-    </div>
-
-    <div>
-      <%= f.label :work_type, "勤務区分" %><br>
-      <%= f.select :work_type, ShiftAssignment.work_types.keys.map { |k| [k, k] }, prompt: "選択してください" %>
-    </div>
-
-    <div>
-      <%= f.submit "登録する" %>
-    </div>
-  <% end %>
-
-  <h3>希望休</h3>
-
-  <% if shift_day.leave_requests.any? %>
-    <table>
-      <thead>
-        <tr>
-          <th>ユーザー</th>
-          <th>メモ</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% shift_day.leave_requests.includes(:user).each do |leave_request| %>
-          <tr>
-            <td><%= leave_request.user.name %></td>
-            <td><%= leave_request.note %></td>
-            <td>
-              <%= button_to "削除",
-                  shift_day_leave_request_path(shift_day, leave_request),
-                  method: :delete,
-                  data: { turbo_confirm: "この希望休を削除しますか？" } %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  <% else %>
-    <p>希望休はまだありません。</p>
-  <% end %>
-
-  <h3>希望休を追加する</h3>
-
-  <%= form_with model: [shift_day, LeaveRequest.new], local: true do |f| %>
-    <div>
-      <%= f.label :user_id, "ユーザー" %><br>
-      <%= f.collection_select :user_id, @users, :id, :name, prompt: "選択してください" %>
-    </div>
-
-    <div>
-      <%= f.label :note, "メモ" %><br>
-      <%= f.text_field :note %>
-    </div>
-
-    <div>
-      <%= f.submit "希望休を登録する" %>
-    </div>
-  <% end %>
-<% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
 
 <p><%= link_to "一覧へ戻る", shift_periods_path %></p>

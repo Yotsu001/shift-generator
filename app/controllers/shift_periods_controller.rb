@@ -19,9 +19,10 @@ class ShiftPeriodsController < ApplicationController
   end
 
   def show
-    @shift_period = ShiftPeriod.find(params[:id])
-    @users = User.order(:name)
-    @zones = Zone.active_ordered
+    @shift_period = ShiftPeriod.includes(shift_days: [:shift_assignments, :leave_requests]).find(params[:id])
+    @shift_days = @shift_period.shift_days.order(:target_date)
+    @users = User.includes(:zones).order(:id)
+    @zones = Zone.order(:position)
   end
 
   private

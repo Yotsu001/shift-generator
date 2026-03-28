@@ -41,7 +41,7 @@
             <% assignment = shift_day.assignment_for(user) %>
             <% leave_request = shift_day.leave_request_for(user) %>
 
-            <% cell_class =
+            <% base_cell_class =
               if leave_request.present?
                 "shift-cell leave-request-cell"
               elsif assignment.present?
@@ -55,7 +55,17 @@
               end
             %>
 
-            <td class="<%= cell_class %>">
+            <% day_column_class =
+              if shift_day.saturday?
+                " saturday-column"
+              elsif shift_day.sunday? || shift_day.holiday?
+                " sunday-column"
+              else
+                ""
+              end
+            %>
+
+            <td class="<%= base_cell_class + day_column_class %>">
               <% if leave_request.present? %>
                 <p>
                   <span class="shift-badge shift-badge-leave-request">希望休</span>

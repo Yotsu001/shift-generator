@@ -215,3 +215,11 @@
   margin-top: 6px;
   font-size: 13px;
 }
+
+.saturday-column {
+  background-image: linear-gradient(rgba(219, 234, 254, 0.35), rgba(219, 234, 254, 0.35));
+}
+
+.sunday-column {
+  background-image: linear-gradient(rgba(254, 226, 226, 0.4), rgba(254, 226, 226, 0.4));
+}

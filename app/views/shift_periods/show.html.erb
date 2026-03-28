@@ -7,12 +7,22 @@
 
 <h2>シフト表</h2>
 
-<table border="1" style="border-collapse: collapse; width: 100%;">
+<table class="shift-table">
   <thead>
     <tr>
-      <th style="min-width: 120px;">ユーザー</th>
+      <th class="shift-header-user">ユーザー</th>
       <% @shift_days.each do |shift_day| %>
-        <th style="min-width: 180px;">
+        <% header_class =
+          if shift_day.saturday?
+            "shift-header-day saturday-header"
+          elsif shift_day.sunday? || shift_day.holiday?
+            "shift-header-day sunday-header"
+          else
+            "shift-header-day"
+          end
+        %>
+
+        <th class="<%= header_class %>">
           <%= shift_day.target_date.strftime("%-m/%-d") %><br>
           （<%= %w[日 月 火 水 木 金 土][shift_day.target_date.wday] %>）<br>
           <%= day_type_label(shift_day.day_type) %>
@@ -30,7 +40,21 @@
           <% assignment = shift_day.assignment_for(user) %>
           <% leave_request = shift_day.leave_request_for(user) %>
 
-          <td style="vertical-align: top; padding: 8px;">
+          <% cell_class =
+            if leave_request.present?
+              "shift-cell leave-request-cell"
+            elsif assignment.present?
+              if assignment.day_shift? || assignment.night_shift?
+                "shift-cell working-cell"
+              else
+                "shift-cell holiday-cell"
+              end
+            else
+              "shift-cell empty-cell"
+            end
+          %>
+
+          <td class="<%= cell_class %>">
             <% if leave_request.present? %>
               <p><strong>希望休</strong></p>
               <% if leave_request.note.present? %>
@@ -55,23 +79,25 @@
                   data: { turbo_confirm: "この割当を削除しますか？" } %>
 
             <% else %>
-              <%= form_with model: [shift_day, ShiftAssignment.new], local: true do |f| %>
+              <%= form_with model: [shift_day, ShiftAssignment.new], local: true, html: { class: "shift-assignment-form" } do |f| %>
                 <%= f.hidden_field :user_id, value: user.id %>
 
                 <div>
                   <%= f.label :work_type, "勤務区分" %><br>
                   <%= f.select :work_type,
                       [["日勤", "day_shift"], ["夜勤", "night_shift"], ["非番", "off_duty"], ["休日", "holiday"]],
-                      prompt: "選択してください" %>
+                      { prompt: "選択してください" },
+                      { class: "work-type-select" } %>
                 </div>
 
-                <div>
+                <div class="zone-field">
                   <%= f.label :zone_id, "区" %><br>
                   <%= f.collection_select :zone_id,
                       user.zones.order(:position),
                       :id,
                       :name,
-                      { prompt: "休みの場合は未選択" } %>
+                      { prompt: "休みの場合は未選択" },
+                      { class: "zone-select" } %>
                 </div>
 
                 <div style="margin-top: 8px;">

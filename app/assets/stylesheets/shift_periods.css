@@ -1,0 +1,54 @@
+.shift-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.shift-table th,
+.shift-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+.shift-header-user {
+  min-width: 120px;
+}
+
+.shift-header-day {
+  min-width: 180px;
+}
+
+.shift-cell {
+  vertical-align: top;
+}
+
+.leave-request-cell {
+  background-color: #fff3cd;
+}
+
+.working-cell {
+  background-color: #dbeafe;
+}
+
+.holiday-cell {
+  background-color: #e5e7eb;
+}
+
+.empty-cell {
+  background-color: #ffffff;
+}
+
+.shift-cell p {
+  margin: 0 0 6px 0;
+}
+
+.shift-cell strong {
+  font-size: 14px;
+}
+
+.saturday-header {
+  background-color: #dbeafe;
+}
+
+.sunday-header {
+  background-color: #fee2e2;
+}

@@ -1,0 +1,12 @@
+<table class="shift-table">
+  <%= render "table_header", shift_days: shift_days %>
+
+  <tbody>
+    <% users.each do |user| %>
+      <%= render "user_row",
+                 user: user,
+                 shift_days: shift_days,
+                 assignments_map: assignments_map %>
+    <% end %>
+  </tbody>
+</table>

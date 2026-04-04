@@ -1,0 +1,12 @@
+<thead>
+  <tr>
+    <th class="sticky-col user-name-header">ユーザー</th>
+
+    <% shift_days.each do |shift_day| %>
+      <th class="<%= weekend_header_class(shift_day) %>">
+        <div><%= l(shift_day.target_date, format: :short) %></div>
+        <div><%= %w(日 月 火 水 木 金 土)[shift_day.target_date.wday] %></div>
+      </th>
+    <% end %>
+  </tr>
+</thead>

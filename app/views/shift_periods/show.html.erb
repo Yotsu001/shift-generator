@@ -4,6 +4,13 @@
 
 <h2>シフト表</h2>
 
+<p style="margin-bottom: 16px;">
+  <%= button_to "平日自動生成",
+      generate_shift_period_path(@shift_period),
+      method: :post,
+      data: { turbo_confirm: "平日の未割当を自動生成しますか？" } %>
+</p>
+
 <%= render "shift_table", users: @users, shift_days: @shift_days %>
 
 <p style="margin-top: 16px;">

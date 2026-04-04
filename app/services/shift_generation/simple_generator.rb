@@ -29,7 +29,10 @@ module ShiftGeneration
 
       assign_mixed_zone_for_day(shift_day, assigned_zone_ids)
 
+      created_count = 0
+
       candidate_users_for(shift_day).each do |user|
+        break if created_count >= 5
         next if shift_day.leave_request_for(user).present?
         next if shift_day.assignment_for(user).present?
 
@@ -68,12 +71,23 @@ module ShiftGeneration
     end
 
     def mixed_zone_candidate_users_for(shift_day)
-      users.select do |user|
+      candidates = users.select do |user|
         next false if shift_day.leave_request_for(user).present?
         next false if shift_day.assignment_for(user).present?
 
         user.zones.exists?(name: "混合")
       end
+
+      candidates.sort_by do |user|
+        mixed_assignment_count(user)
+      end
+    end
+
+    def mixed_assignment_count(user)
+      ShiftAssignment
+        .joins(:zone)
+        .where(user: user, zones: { name: "混合" })
+        .count
     end
 
     def candidate_users_for(shift_day)

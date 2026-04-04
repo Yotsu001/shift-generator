@@ -1,28 +1,4 @@
-<% base_cell_class =
-  if leave_request.present?
-    "shift-cell leave-request-cell"
-  elsif assignment.present?
-    if assignment.day_shift? || assignment.night_shift?
-      "shift-cell working-cell"
-    else
-      "shift-cell holiday-cell"
-    end
-  else
-    "shift-cell empty-cell"
-  end
-%>
-
-<% day_column_class =
-  if shift_day.saturday?
-    " saturday-column"
-  elsif shift_day.sunday? || shift_day.holiday?
-    " sunday-column"
-  else
-    ""
-  end
-%>
-
-<td class="<%= base_cell_class + day_column_class %>">
+<td class="<%= shift_cell_class(shift_day, assignment, leave_request) %>">
   <% if leave_request.present? %>
     <p>
       <span class="shift-badge shift-badge-leave-request">希望休</span>
@@ -138,7 +114,7 @@
         <div>
           <%= f.label :work_type, "勤務区分" %><br>
           <%= f.select :work_type,
-              [["日勤", "day_shift"], ["夜勤", "night_shift"], ["非番", "off_duty"], ["休日", "holiday"]],
+              shift_work_type_select_options,
               { prompt: "選択してください" },
               { class: "work-type-select" } %>
         </div>

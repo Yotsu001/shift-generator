@@ -3,19 +3,9 @@
     <th class="shift-header-user shift-sticky-top shift-sticky-left shift-corner-cell">ユーザー</th>
 
     <% shift_days.each do |shift_day| %>
-      <% header_class =
-        if shift_day.saturday?
-          "shift-header-day shift-sticky-top saturday-header"
-        elsif shift_day.sunday? || shift_day.holiday?
-          "shift-header-day shift-sticky-top sunday-header"
-        else
-          "shift-header-day shift-sticky-top"
-        end
-      %>
-
-      <th class="<%= header_class %>">
+      <th class="<%= shift_header_class(shift_day) %>">
         <%= shift_day.target_date.strftime("%-m/%-d") %><br>
-        （<%= %w[日 月 火 水 木 金 土][shift_day.target_date.wday] %>）<br>
+        （<%= shift_weekday_label(shift_day.target_date) %>）<br>
         <%= day_type_label(shift_day.day_type) %>
       </th>
     <% end %>

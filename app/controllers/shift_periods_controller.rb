@@ -28,7 +28,8 @@ class ShiftPeriodsController < ApplicationController
     ShiftGeneration::SimpleGenerator.new(@shift_period).call
     redirect_to @shift_period, notice: "平日の自動割当を生成しました"
   rescue StandardError => e
-    redirect_to @shift_period, alert: "自動割当の生成に失敗しました: #{e.message}"
+    Rails.logger.error e.full_message
+    redirect_to @shift_period, alert: "自動生成に失敗しました"
   end
 
   private

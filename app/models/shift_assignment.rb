@@ -18,7 +18,11 @@ class ShiftAssignment < ApplicationRecord
 
   def zone_presence_by_work_type
     if day_shift? || night_shift?
-      errors.add(:zone, "を選択してください") if zone.blank?
+      if weekend_or_holiday_shift_day?
+        errors.add(:zone, "は土日祝の日勤・夜勤では選択できません") if zone.present?
+      else
+        errors.add(:zone, "を選択してください") if zone.blank?
+      end
     elsif off_duty? || holiday?
       errors.add(:zone, "は休みの勤務区分では選択できません") if zone.present?
     end
@@ -45,10 +49,10 @@ class ShiftAssignment < ApplicationRecord
 
   def weekend_work_type_limit
     return if shift_day.blank?
-    return unless shift_day.saturday? || shift_day.sunday?
+    return unless shift_day.saturday? || shift_day.sunday? || shift_day.holiday?
 
     unless day_shift? || night_shift?
-      errors.add(:work_type, "は土日では日勤または夜勤のみ登録できます")
+      errors.add(:work_type, "は土日祝では日勤または夜勤のみ登録できます")
       return
     end
 
@@ -59,9 +63,9 @@ class ShiftAssignment < ApplicationRecord
     return if existing_same_type.blank?
 
     if day_shift?
-      errors.add(:work_type, "の日勤は土日1人までです")
+      errors.add(:work_type, "の日勤は土日祝1人までです")
     elsif night_shift?
-      errors.add(:work_type, "の夜勤は土日1人までです")
+      errors.add(:work_type, "の夜勤は土日祝1人までです")
     end
   end
 
@@ -71,5 +75,9 @@ class ShiftAssignment < ApplicationRecord
     if LeaveRequest.exists?(user_id: user_id, shift_day_id: shift_day_id)
       errors.add(:base, "希望休が登録されているため勤務を登録できません")
     end
+  end
+
+  def weekend_or_holiday_shift_day?
+    shift_day.present? && (shift_day.saturday? || shift_day.sunday? || shift_day.holiday?)
   end
 end

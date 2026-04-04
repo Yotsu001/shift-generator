@@ -79,15 +79,18 @@ module ShiftGeneration
       end
 
       candidates.sort_by do |user|
-        mixed_assignment_count(user)
+        [mixed_assignment_count(user), user.id]
       end
     end
 
     def mixed_assignment_count(user)
-      ShiftAssignment
-        .joins(:zone)
-        .where(user: user, zones: { name: "混合" })
-        .count
+      ShiftAssignment.joins(:zone, :shift_day)
+                    .where(
+                      user: user,
+                      zones: { name: "混合" },
+                      shift_days: { shift_period_id: shift_period.id }
+                    )
+                    .count
     end
 
     def candidate_users_for(shift_day)

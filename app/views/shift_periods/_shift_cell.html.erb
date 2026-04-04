@@ -1,4 +1,8 @@
 <td class="<%= shift_cell_class(shift_day, assignment, leave_request) %>">
+  <% assignment_form_id = "assignment-form-#{user.id}-#{shift_day.id}" %>
+  <% leave_form_id = "leave-form-#{user.id}-#{shift_day.id}" %>
+  <% edit_assignment_form_id = assignment.present? ? "edit-assignment-form-#{assignment.id}" : nil %>
+  <% edit_leave_form_id = leave_request.present? ? "edit-leave-form-#{leave_request.id}" : nil %>
   <% if leave_request.present? %>
     <p>
       <span class="shift-badge shift-badge-leave-request">希望休</span>
@@ -17,12 +21,23 @@
       </button>
 
       <%= button_to "希望休削除",
-          shift_day_leave_request_path(shift_day, leave_request),
-          method: :delete,
-          data: { turbo_confirm: "この希望休を削除しますか？" } %>
+        shift_day_leave_request_path(shift_day, leave_request),
+        method: :delete,
+        form: { data: { turbo: false, turbo_confirm: "この希望休を削除しますか？" } } %>
     </div>
 
-    <div id="edit-leave-form-<%= leave_request.id %>" class="toggle-form hidden">
+    <div id="<%= edit_leave_form_id %>" class="<%= toggle_form_class(edit_leave_form_id, @open_form_id) %>">
+      <% if defined?(@shift_assignment) && @shift_assignment.present? &&
+            @shift_assignment.errors.any? &&
+            @open_form_id == edit_assignment_form_id %>
+        <div class="form-errors">
+          <ul>
+            <% @shift_assignment.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
       <%= form_with model: [shift_day, leave_request], local: true, html: { class: "compact-form" } do |f| %>
         <%= f.hidden_field :user_id, value: user.id %>
 
@@ -57,14 +72,25 @@
       </button>
 
       <%= button_to "割当削除",
-          shift_day_shift_assignment_path(shift_day, assignment),
-          method: :delete,
-          data: { turbo_confirm: "この割当を削除しますか？" } %>
+        shift_day_shift_assignment_path(shift_day, assignment),
+        method: :delete,
+        form: { data: { turbo: false, turbo_confirm: "この割当を削除しますか？" } } %>
     </div>
 
     <% show_zone_field = !(shift_day.saturday? || shift_day.sunday? || shift_day.holiday?) %>
 
-    <div id="edit-assignment-form-<%= assignment.id %>" class="toggle-form hidden">
+    <div id="<%= edit_assignment_form_id %>" class="<%= toggle_form_class(edit_assignment_form_id, @open_form_id) %>">
+      <% if defined?(@shift_assignment) && @shift_assignment.present? &&
+            @shift_assignment.errors.any? &&
+            @open_form_id == edit_assignment_form_id %>
+        <div class="form-errors">
+          <ul>
+            <% @shift_assignment.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
       <%= form_with model: [shift_day, assignment], local: true, html: { class: "shift-assignment-form compact-form" } do |f| %>
         <%= f.hidden_field :user_id, value: user.id %>
 
@@ -113,7 +139,18 @@
 
     <% show_zone_field = !(shift_day.saturday? || shift_day.sunday? || shift_day.holiday?) %>
 
-    <div id="assignment-form-<%= user.id %>-<%= shift_day.id %>" class="toggle-form hidden">
+    <div id="<%= assignment_form_id %>" class="<%= toggle_form_class(assignment_form_id, @open_form_id) %>">
+      <% if defined?(@shift_assignment) && @shift_assignment.present? &&
+            @shift_assignment.errors.any? &&
+            @open_form_id == assignment_form_id %>
+        <div class="form-errors">
+          <ul>
+            <% @shift_assignment.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
       <%= form_with model: [shift_day, ShiftAssignment.new], local: true, html: { class: "shift-assignment-form compact-form" } do |f| %>
         <%= f.hidden_field :user_id, value: user.id %>
 
@@ -143,7 +180,7 @@
       <% end %>
     </div>
 
-    <div id="leave-form-<%= user.id %>-<%= shift_day.id %>" class="toggle-form hidden">
+    <div id="<%= leave_form_id %>" class="<%= toggle_form_class(leave_form_id, @open_form_id) %>">
       <%= form_with model: [shift_day, LeaveRequest.new], local: true, html: { class: "compact-form" } do |f| %>
         <%= f.hidden_field :user_id, value: user.id %>
 

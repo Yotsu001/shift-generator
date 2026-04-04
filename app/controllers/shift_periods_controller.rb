@@ -1,6 +1,6 @@
 class ShiftPeriodsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_shift_period, only: [:show, :generate]
+  before_action :set_shift_period, only: [:show, :generate, :clear_assignments]
 
   def index
     @shift_periods = ShiftPeriod.order(start_date: :desc)
@@ -30,6 +30,16 @@ class ShiftPeriodsController < ApplicationController
   rescue StandardError => e
     Rails.logger.error e.full_message
     redirect_to @shift_period, alert: "自動生成に失敗しました"
+  end
+
+  def clear_assignments
+    shift_period = ShiftPeriod.find(params[:id])
+
+    ShiftAssignment.joins(:shift_day)
+                  .where(shift_days: { shift_period_id: shift_period.id })
+                  .delete_all
+
+    redirect_to shift_period_path(shift_period), notice: "割当を全削除しました"
   end
 
   private

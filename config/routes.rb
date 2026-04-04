@@ -3,11 +3,15 @@ Rails.application.routes.draw do
   root "homes#index"
 
   resources :shift_periods do
-    post :generate, on: :member
+    member do
+      post :generate
+      delete :clear_assignments
+    end
   end
   
   resources :shift_days, only: [] do
     resources :shift_assignments, only: [:create, :edit, :update, :destroy]
     resources :leave_requests, only: [:create, :edit, :update, :destroy]
   end
+
 end

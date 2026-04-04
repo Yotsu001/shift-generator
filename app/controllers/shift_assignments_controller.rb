@@ -25,10 +25,10 @@ class ShiftAssignmentsController < ApplicationController
     end
   end
 
-    def destroy
-      @shift_assignment.destroy
-      redirect_to shift_period_path(@shift_day.shift_period), notice: "割当を削除しました。"
-    end
+  def destroy
+    @shift_assignment.destroy
+    redirect_to shift_period_path(@shift_day.shift_period), notice: "割当を削除しました。"
+  end
 
   private
 
@@ -51,4 +51,5 @@ class ShiftAssignmentsController < ApplicationController
                               .order(:target_date)
     @users = User.includes(:zones).order(:id)
   end
+
 end

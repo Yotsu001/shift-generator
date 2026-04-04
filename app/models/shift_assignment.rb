@@ -49,7 +49,7 @@ class ShiftAssignment < ApplicationRecord
 
   def weekend_work_type_limit
     return if shift_day.blank?
-    return unless shift_day.saturday? || shift_day.sunday? || shift_day.holiday?
+    return unless weekend_or_holiday_shift_day?
 
     unless day_shift? || night_shift?
       errors.add(:work_type, "は土日祝では日勤または夜勤のみ登録できます")

@@ -1,0 +1,153 @@
+<td class="<%= shift_cell_class(shift_day, assignment, leave_request) %>">
+  <% if leave_request.present? %>
+    <p>
+      <span class="shift-badge shift-badge-leave-request">希望休</span>
+    </p>
+
+    <% if leave_request.note.present? %>
+      <p>メモ: <%= leave_request.note %></p>
+    <% end %>
+
+    <div class="cell-action-buttons">
+      <button
+        type="button"
+        class="toggle-button action-button action-button-edit"
+        data-target="edit-leave-form-<%= leave_request.id %>">
+        編集
+      </button>
+
+      <%= button_to "希望休削除",
+          shift_day_leave_request_path(shift_day, leave_request),
+          method: :delete,
+          data: { turbo_confirm: "この希望休を削除しますか？" } %>
+    </div>
+
+    <div id="edit-leave-form-<%= leave_request.id %>" class="toggle-form hidden">
+      <%= form_with model: [shift_day, leave_request], local: true, html: { class: "compact-form" } do |f| %>
+        <%= f.hidden_field :user_id, value: user.id %>
+
+        <div>
+          <%= f.label :note, "希望休メモ" %><br>
+          <%= f.text_field :note %>
+        </div>
+
+        <div style="margin-top: 8px;">
+          <%= f.submit "更新する" %>
+        </div>
+      <% end %>
+    </div>
+
+  <% elsif assignment.present? %>
+    <p>
+      <span class="<%= work_type_badge_class(assignment.work_type) %>">
+        <%= work_type_label(assignment.work_type) %>
+      </span>
+    </p>
+
+    <% if assignment.zone.present? %>
+      <p class="shift-zone-name"><%= assignment.zone.name %></p>
+    <% end %>
+
+    <div class="cell-action-buttons">
+      <button
+        type="button"
+        class="toggle-button action-button action-button-edit"
+        data-target="edit-assignment-form-<%= assignment.id %>">
+        編集
+      </button>
+
+      <%= button_to "割当削除",
+          shift_day_shift_assignment_path(shift_day, assignment),
+          method: :delete,
+          data: { turbo_confirm: "この割当を削除しますか？" } %>
+    </div>
+
+    <div id="edit-assignment-form-<%= assignment.id %>" class="toggle-form hidden">
+      <%= form_with model: [shift_day, assignment], local: true, html: { class: "shift-assignment-form compact-form" } do |f| %>
+        <%= f.hidden_field :user_id, value: user.id %>
+
+        <div>
+          <%= f.label :work_type, "勤務区分" %><br>
+          <%= f.select :work_type,
+              work_type_options,
+              { prompt: "選択してください" },
+              { class: "work-type-select" } %>
+        </div>
+
+        <div class="zone-field">
+          <%= f.label :zone_id, "区" %><br>
+          <%= f.collection_select :zone_id,
+              user.zones.order(:position),
+              :id,
+              :name,
+              { prompt: "休みの場合は未選択" },
+              { class: "zone-select" } %>
+        </div>
+
+        <div style="margin-top: 8px;">
+          <%= f.submit "更新する" %>
+        </div>
+      <% end %>
+    </div>
+
+  <% else %>
+    <div class="cell-action-buttons">
+      <button
+        type="button"
+        class="toggle-button action-button action-button-primary"
+        data-target="assignment-form-<%= user.id %>-<%= shift_day.id %>">
+        勤務登録
+      </button>
+
+      <button
+        type="button"
+        class="toggle-button action-button action-button-secondary"
+        data-target="leave-form-<%= user.id %>-<%= shift_day.id %>">
+        希望休登録
+      </button>
+    </div>
+
+    <div id="assignment-form-<%= user.id %>-<%= shift_day.id %>" class="toggle-form hidden">
+      <%= form_with model: [shift_day, ShiftAssignment.new], local: true, html: { class: "shift-assignment-form compact-form" } do |f| %>
+        <%= f.hidden_field :user_id, value: user.id %>
+
+        <div>
+          <%= f.label :work_type, "勤務区分" %><br>
+          <%= f.select :work_type,
+              shift_work_type_select_options,
+              { prompt: "選択してください" },
+              { class: "work-type-select" } %>
+        </div>
+
+        <div class="zone-field">
+          <%= f.label :zone_id, "区" %><br>
+          <%= f.collection_select :zone_id,
+              user.zones.order(:position),
+              :id,
+              :name,
+              { prompt: "休みの場合は未選択" },
+              { class: "zone-select" } %>
+        </div>
+
+        <div style="margin-top: 8px;">
+          <%= f.submit "勤務登録" %>
+        </div>
+      <% end %>
+    </div>
+
+    <div id="leave-form-<%= user.id %>-<%= shift_day.id %>" class="toggle-form hidden">
+      <%= form_with model: [shift_day, LeaveRequest.new], local: true, html: { class: "compact-form" } do |f| %>
+        <%= f.hidden_field :user_id, value: user.id %>
+
+        <div>
+          <%= f.label :note, "希望休メモ" %><br>
+          <%= f.text_field :note %>
+        </div>
+
+        <div style="margin-top: 8px;">
+          <%= f.submit "希望休登録" %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</td>

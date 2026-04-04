@@ -12,6 +12,16 @@ class LeaveRequestsController < ApplicationController
     end
   end
 
+  def update
+    @leave_request = @shift_day.leave_requests.find(params[:id])
+
+    if @leave_request.update(leave_request_params)
+      redirect_to shift_period_path(@shift_day.shift_period), notice: "希望休を更新しました。"
+    else
+      redirect_to shift_period_path(@shift_day.shift_period), alert: @leave_request.errors.full_messages.join(", ")
+    end
+  end
+
   def destroy
     @shift_day = ShiftDay.find(params[:shift_day_id])
     @leave_request = @shift_day.leave_requests.find(params[:id])

@@ -1,0 +1,13 @@
+<thead>
+  <tr>
+    <th class="shift-header-user shift-sticky-top shift-sticky-left shift-corner-cell">ユーザー</th>
+
+    <% shift_days.each do |shift_day| %>
+      <th class="<%= shift_header_class(shift_day) %>">
+        <%= shift_day.target_date.strftime("%-m/%-d") %><br>
+        （<%= shift_weekday_label(shift_day.target_date) %>）<br>
+        <%= day_type_label(shift_day.day_type) %>
+      </th>
+    <% end %>
+  </tr>
+</thead>

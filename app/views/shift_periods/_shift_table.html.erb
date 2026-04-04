@@ -1,0 +1,11 @@
+<div class="shift-table-wrapper">
+  <table class="shift-table">
+    <%= render "shift_table_header", shift_days: shift_days %>
+
+    <tbody>
+      <% users.each do |user| %>
+        <%= render "shift_user_row", user: user, shift_days: shift_days %>
+      <% end %>
+    </tbody>
+  </table>
+</div>

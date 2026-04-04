@@ -70,3 +70,276 @@
 .toggle-button {
   cursor: pointer;
 }
+
+.shift-table-wrapper {
+  overflow-x: auto;
+  max-width: 100%;
+  border: 1px solid #ccc;
+}
+
+.shift-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: max-content;
+  min-width: 100%;
+}
+
+.shift-table th,
+.shift-table td {
+  border-right: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  padding: 8px;
+  background-clip: padding-box;
+}
+
+.shift-header-user {
+  min-width: 120px;
+}
+
+.shift-header-day {
+  min-width: 180px;
+}
+
+.shift-cell {
+  min-width: 180px;
+  vertical-align: top;
+}
+
+.shift-sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background-color: #fff;
+}
+
+.shift-sticky-left {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background-color: #fff;
+}
+
+.shift-corner-cell {
+  z-index: 30;
+}
+
+.user-name-cell {
+  font-weight: bold;
+}
+
+.saturday-header {
+  background-color: #dbeafe;
+}
+
+.sunday-header {
+  background-color: #fee2e2;
+}
+
+.leave-request-cell {
+  background-color: #fff3cd;
+}
+
+.working-cell {
+  background-color: #dbeafe;
+}
+
+.holiday-cell {
+  background-color: #e5e7eb;
+}
+
+.empty-cell {
+  background-color: #ffffff;
+}
+
+.hidden {
+  display: none;
+}
+
+.cell-action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.toggle-form {
+  margin-top: 8px;
+}
+
+.toggle-button {
+  cursor: pointer;
+}
+
+.shift-cell p {
+  margin: 0 0 6px 0;
+}
+
+.shift-cell strong {
+  font-size: 14px;
+}
+
+.shift-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1.4;
+}
+
+.shift-badge-day {
+  background-color: #bfdbfe;
+  color: #1e3a8a;
+}
+
+.shift-badge-night {
+  background-color: #c7d2fe;
+  color: #312e81;
+}
+
+.shift-badge-off-duty {
+  background-color: #d1d5db;
+  color: #374151;
+}
+
+.shift-badge-holiday {
+  background-color: #e5e7eb;
+  color: #4b5563;
+}
+
+.shift-badge-leave-request {
+  background-color: #fde68a;
+  color: #92400e;
+}
+
+.shift-zone-name {
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.saturday-column {
+  background-image: linear-gradient(rgba(219, 234, 254, 0.35), rgba(219, 234, 254, 0.35));
+}
+
+.sunday-column {
+  background-image: linear-gradient(rgba(254, 226, 226, 0.4), rgba(254, 226, 226, 0.4));
+}
+
+.action-button {
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.action-button-primary {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+.action-button-secondary {
+  background-color: #f59e0b;
+  color: #ffffff;
+}
+
+.action-button-edit {
+  background-color: #6b7280;
+  color: #ffffff;
+}
+
+.cell-action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.compact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.compact-form label {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.compact-form select,
+.compact-form input[type="text"] {
+  width: 100%;
+  max-width: 160px;
+  padding: 4px 6px;
+  font-size: 12px;
+  box-sizing: border-box;
+}
+
+.compact-form input[type="submit"] {
+  width: 100%;
+  max-width: 160px;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 6px;
+  background-color: #111827;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.toggle-form {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #d1d5db;
+}
+
+.shift-cell {
+  min-width: 180px;
+  vertical-align: top;
+}
+
+.shift-zone-name {
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.hidden {
+  display: none;
+}
+
+.shift-table {
+  font-size: 13px;
+}
+
+.shift-table th {
+  text-align: center;
+}
+
+.shift-table td {
+  text-align: left;
+}
+
+.flash-wrapper {
+  margin: 16px;
+}
+
+.flash-message {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.flash-notice {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #10b981;
+}
+
+.flash-alert {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #ef4444;
+}

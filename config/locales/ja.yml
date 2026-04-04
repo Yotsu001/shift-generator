@@ -1,0 +1,64 @@
+ja:
+  activerecord:
+    models:
+      shift_period: シフト期間
+      shift_day: シフト日
+      shift_assignment: 勤務割当
+      leave_request: 希望休
+      user: ユーザー
+      zone: 区
+
+    attributes:
+      shift_period:
+        name: 名称
+        start_date: 開始日
+        end_date: 終了日
+        status: 状態
+
+      shift_day:
+        target_date: 日付
+        day_type: 日種別
+
+      shift_assignment:
+        user: ユーザー
+        user_id: ユーザー
+        zone: 区
+        zone_id: 区
+        work_type: 勤務区分
+        shift_day: シフト日
+        shift_day_id: シフト日
+
+      leave_request:
+        user: ユーザー
+        user_id: ユーザー
+        shift_day: シフト日
+        shift_day_id: シフト日
+        note: メモ
+
+      user:
+        name: 氏名
+
+      zone:
+        name: 区名
+        position: 並び順
+
+  enums:
+    shift_day:
+      day_type:
+        weekday: 平日
+        saturday: 土曜
+        sunday: 日曜
+        holiday: 祝日
+
+    shift_assignment:
+      work_type:
+        day_shift: 日勤
+        night_shift: 夜勤
+        off_duty: 非番
+        holiday: 休日
+
+    shift_period:
+      status:
+        draft: 下書き
+        published: 公開
+        locked: ロック

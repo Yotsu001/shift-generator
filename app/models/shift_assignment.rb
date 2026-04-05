@@ -5,9 +5,12 @@ class ShiftAssignment < ApplicationRecord
 
   enum :work_type, {
     day_shift: 0,
-    night_shift: 1,
-    off_duty: 2,
-    holiday: 3
+    middle_shift: 1,
+    night_shift: 2,
+    saturday_off: 3,
+    sunday_off: 4,
+    holiday: 5,
+    national_holiday: 6
   }
 
   validates :employee, presence: true
@@ -26,20 +29,20 @@ class ShiftAssignment < ApplicationRecord
   def zone_presence_by_work_type
     return if work_type.blank?
 
-    if day_shift? || night_shift?
+    if day_shift? || middle_shift? || night_shift?
       if weekend_or_holiday?
         errors.add(:zone, "は土日祝勤務では指定できません") if zone.present?
       else
         errors.add(:zone, "を指定してください") if zone.blank?
       end
-    elsif off_duty? || holiday?
+    elsif saturday_off? || sunday_off? || holiday? || national_holiday?
       errors.add(:zone, "は指定できません") if zone.present?
     end
   end
 
   def zone_must_be_assignable_for_employee
     return if employee.blank? || zone.blank?
-    return unless day_shift? || night_shift?
+    return unless day_shift? || middle_shift? || night_shift?
     return unless employee.respond_to?(:zones)
     return if employee.zones.include?(zone)
 
@@ -63,7 +66,7 @@ class ShiftAssignment < ApplicationRecord
 
   def weekend_work_type_limit
     return unless weekend_or_holiday?
-    return unless day_shift? || night_shift?
+    return unless day_shift? || middle_shift?
 
     relation = ShiftAssignment.where(
       shift_day_id: shift_day_id,
@@ -79,7 +82,7 @@ class ShiftAssignment < ApplicationRecord
   def cannot_assign_if_leave_requested
     return if employee.blank?
     return if shift_day.blank?
-    return if off_duty? || holiday?
+    return unless day_shift? || middle_shift? || night_shift?
 
     if LeaveRequest.exists?(employee_id: employee_id, shift_day_id: shift_day_id)
       errors.add(:base, "希望休が登録されているため勤務を割り当てできません")

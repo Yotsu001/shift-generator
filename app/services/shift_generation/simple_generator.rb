@@ -1,7 +1,7 @@
 module ShiftGeneration
   class SimpleGenerator
     WEEKDAY_MAX_ASSIGNMENTS_COUNT = 5
-    WEEKEND_WORK_TYPES = %w[day_shift night_shift].freeze
+    WEEKEND_AUTO_WORK_TYPES = %w[day_shift middle_shift].freeze
 
     def initialize(shift_period)
       @shift_period = shift_period
@@ -80,7 +80,7 @@ module ShiftGeneration
         assignment.save!
         created_count += 1
 
-        Rails.logger.debug "[weekday] created assignment_id=#{assignment.id} employee_id=#{employee.id} zone_name=#{zone.name}"
+        Rails.logger.debug "[weekday] created assignment_id=#{assignment.id} employee_id=#{employee.id} zone_name=#{zone.name} work_type=#{assignment.work_type}"
       end
     end
 
@@ -88,11 +88,11 @@ module ShiftGeneration
     # 土日祝割当
     # -------------------------
     def assign_weekend_or_holiday(shift_day)
-      current_assignments = shift_day.shift_assignments.where(work_type: WEEKEND_WORK_TYPES)
+      current_assignments = shift_day.shift_assignments.where(work_type: WEEKEND_AUTO_WORK_TYPES)
       return if current_assignments.count >= 2
 
       existing_work_types = current_assignments.pluck(:work_type)
-      missing_work_types = WEEKEND_WORK_TYPES - existing_work_types
+      missing_work_types = WEEKEND_AUTO_WORK_TYPES - existing_work_types
 
       available_employees = weekend_candidate_employees_for(shift_day)
       return if available_employees.size < missing_work_types.size
@@ -127,7 +127,7 @@ module ShiftGeneration
     def weekend_assignment_count(employee)
       ShiftAssignment.joins(:shift_day)
                      .where(employee: employee, shift_days: { shift_period_id: shift_period.id })
-                     .where(work_type: WEEKEND_WORK_TYPES)
+                     .where(work_type: WEEKEND_AUTO_WORK_TYPES)
                      .merge(ShiftDay.where(day_type: %w[saturday sunday holiday]))
                      .count
     end
@@ -147,11 +147,13 @@ module ShiftGeneration
 
       assignment = shift_day.shift_assignments.build(
         employee: employee,
-        work_type: "day_shift",
+        work_type: "middle_shift",
         zone: mixed_zone
       )
 
       assignment.save!
+
+      Rails.logger.debug "[mixed] created assignment_id=#{assignment.id} employee_id=#{employee.id} zone_name=#{mixed_zone.name} work_type=#{assignment.work_type}"
     end
 
     def mixed_zone_already_assigned?(shift_day)
@@ -182,11 +184,11 @@ module ShiftGeneration
     # 代償休
     # -------------------------
     def assign_weekend_compensatory_days!
-      assign_compensatory_off_duty_for_saturday_work! +
-        assign_compensatory_holiday_for_sunday_work!
+      assign_compensatory_saturday_off_for_saturday_work! +
+        assign_compensatory_sunday_off_for_sunday_work!
     end
 
-    def assign_compensatory_off_duty_for_saturday_work!
+    def assign_compensatory_saturday_off_for_saturday_work!
       created_count = 0
 
       saturday_shift_days.each do |shift_day|
@@ -199,7 +201,7 @@ module ShiftGeneration
 
           next if target_day.blank?
 
-          assign_rest_day(target_day, employee, "off_duty")
+          assign_rest_day(target_day, employee, "saturday_off")
           created_count += 1
         end
       end
@@ -207,7 +209,7 @@ module ShiftGeneration
       created_count
     end
 
-    def assign_compensatory_holiday_for_sunday_work!
+    def assign_compensatory_sunday_off_for_sunday_work!
       created_count = 0
 
       sunday_shift_days.each do |shift_day|
@@ -220,7 +222,7 @@ module ShiftGeneration
 
           next if target_day.blank?
 
-          assign_rest_day(target_day, employee, "holiday")
+          assign_rest_day(target_day, employee, "sunday_off")
           created_count += 1
         end
       end
@@ -238,7 +240,7 @@ module ShiftGeneration
 
     def working_employees_on(shift_day)
       shift_day.shift_assignments
-               .where(work_type: WEEKEND_WORK_TYPES)
+               .where(work_type: WEEKEND_AUTO_WORK_TYPES)
                .includes(:employee)
                .map(&:employee)
     end
@@ -287,7 +289,7 @@ module ShiftGeneration
     end
 
     def existing_working_assignment_count(shift_day)
-      shift_day.shift_assignments.where(work_type: WEEKEND_WORK_TYPES).count
+      shift_day.shift_assignments.where(work_type: %w[day_shift middle_shift]).count
     end
 
     def weekday_max_assignments_count

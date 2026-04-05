@@ -3,6 +3,7 @@
   <% leave_form_id = "leave-form-#{employee.id}-#{shift_day.id}" %>
   <% edit_assignment_form_id = assignment.present? ? "edit-assignment-form-#{assignment.id}" : nil %>
   <% edit_leave_form_id = leave_request.present? ? "edit-leave-form-#{leave_request.id}" : nil %>
+
   <% if leave_request.present? %>
     <p>
       <span class="shift-badge shift-badge-leave-request">希望休</span>
@@ -27,17 +28,18 @@
     </div>
 
     <div id="<%= edit_leave_form_id %>" class="<%= toggle_form_class(edit_leave_form_id, @open_form_id) %>">
-    <% if defined?(@leave_request) && @leave_request.present? &&
-          @leave_request.errors.any? &&
-          @open_form_id == edit_leave_form_id %>
+      <% if defined?(@leave_request) && @leave_request.present? &&
+            @leave_request.errors.any? &&
+            @open_form_id == edit_leave_form_id %>
         <div class="form-errors">
           <ul>
-            <% @shift_assignment.errors.full_messages.each do |message| %>
+            <% @leave_request.errors.full_messages.each do |message| %>
               <li><%= message %></li>
             <% end %>
           </ul>
         </div>
       <% end %>
+
       <%= form_with model: [shift_day, leave_request], local: true, html: { class: "compact-form" } do |f| %>
         <%= f.hidden_field :employee_id, value: employee.id %>
 
@@ -91,6 +93,7 @@
           </ul>
         </div>
       <% end %>
+
       <%= form_with model: [shift_day, assignment], local: true, html: { class: "shift-assignment-form compact-form" } do |f| %>
         <%= f.hidden_field :employee_id, value: employee.id %>
 
@@ -109,7 +112,7 @@
                 @zones.order(:position),
                 :id,
                 :name,
-                { prompt: "平日の日勤・夜勤のみ選択" },
+                { prompt: "平日の日勤・中勤のみ選択" },
                 { class: "zone-select" } %>
           </div>
         <% end %>
@@ -151,6 +154,7 @@
           </ul>
         </div>
       <% end %>
+
       <%= form_with model: [shift_day, ShiftAssignment.new], local: true, html: { class: "shift-assignment-form compact-form" } do |f| %>
         <%= f.hidden_field :employee_id, value: employee.id %>
 
@@ -169,7 +173,7 @@
                 @zones.order(:position),
                 :id,
                 :name,
-                { prompt: "平日の日勤・夜勤のみ選択" },
+                { prompt: "平日の日勤・中勤のみ選択" },
                 { class: "zone-select" } %>
           </div>
         <% end %>

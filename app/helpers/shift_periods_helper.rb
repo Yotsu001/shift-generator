@@ -49,4 +49,11 @@ module ShiftPeriodsHelper
   def shift_weekday_label(target_date)
     %w[日 月 火 水 木 金 土][target_date.wday]
   end
+
+  def toggle_form_class(form_id, open_form_id)
+    classes = ["toggle-form"]
+    classes << "hidden" unless form_id == open_form_id
+    classes.join(" ")
+  end
+
 end

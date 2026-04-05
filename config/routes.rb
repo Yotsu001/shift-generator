@@ -2,6 +2,8 @@ Rails.application.routes.draw do
   devise_for :users
   root "homes#index"
 
+  resources :employees
+
   resources :shift_periods do
     member do
       post :generate

@@ -1,5 +1,6 @@
 class Employee < ApplicationRecord
   belongs_to :user, optional: true
+  belongs_to :primary_zone, class_name: 'Zone', optional: true
 
   has_many :shift_assignments, dependent: :restrict_with_exception
   has_many :leave_requests, dependent: :restrict_with_exception

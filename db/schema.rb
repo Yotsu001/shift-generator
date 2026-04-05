@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_04_05_031540) do
+ActiveRecord::Schema[7.1].define(version: 2026_04_05_052356) do
   create_table "employees", charset: "utf8mb3", force: :cascade do |t|
     t.string "name", null: false
     t.boolean "active", default: true, null: false
@@ -20,8 +20,11 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_05_031540) do
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "mixed_zone_preferred", default: false, null: false
+    t.bigint "primary_zone_id"
     t.index ["active"], name: "index_employees_on_active"
     t.index ["display_order"], name: "index_employees_on_display_order"
+    t.index ["primary_zone_id"], name: "index_employees_on_primary_zone_id"
     t.index ["user_id"], name: "index_employees_on_user_id"
   end
 
@@ -108,6 +111,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_05_031540) do
   end
 
   add_foreign_key "employees", "users"
+  add_foreign_key "employees", "zones", column: "primary_zone_id"
   add_foreign_key "leave_requests", "employees"
   add_foreign_key "leave_requests", "shift_days"
   add_foreign_key "leave_requests", "users"

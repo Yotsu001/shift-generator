@@ -1,0 +1,33 @@
+<%= form_with model: @employee, local: true do |form| %>
+  <% if @employee.errors.any? %>
+    <div class="error-messages">
+      <h2><%= @employee.errors.count %>件のエラーがあります</h2>
+      <ul>
+        <% @employee.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= form.label :name, 'スタッフ名' %><br>
+    <%= form.text_field :name %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :primary_zone_id, '担当区' %><br>
+    <%= form.collection_select :primary_zone_id, Zone.order(:id), :id, :name, { include_blank: '未設定' } %>
+  </div>
+
+  <% if @employee.has_attribute?(:mixed_zone_preferred) %>
+    <div class="form-group">
+      <%= form.label :mixed_zone_preferred, '混合区候補にする' %>
+      <%= form.check_box :mixed_zone_preferred %>
+    </div>
+  <% end %>
+
+  <div class="form-actions">
+    <%= form.submit %>
+  </div>
+<% end %>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_04_05_010059) do
+ActiveRecord::Schema[7.1].define(version: 2026_04_05_031540) do
   create_table "employees", charset: "utf8mb3", force: :cascade do |t|
     t.string "name", null: false
     t.boolean "active", default: true, null: false
@@ -26,7 +26,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_05_010059) do
   end
 
   create_table "leave_requests", charset: "utf8mb3", force: :cascade do |t|
-    t.bigint "user_id", null: false
+    t.bigint "user_id"
     t.bigint "shift_day_id", null: false
     t.string "note"
     t.datetime "created_at", null: false
@@ -40,7 +40,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_05_010059) do
 
   create_table "shift_assignments", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "shift_day_id", null: false
-    t.bigint "user_id", null: false
+    t.bigint "user_id"
     t.integer "work_type", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

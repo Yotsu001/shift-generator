@@ -15,10 +15,10 @@ module ShiftPeriodsHelper
     shift_day.leave_request_for(employee)
   end
 
-  def shift_header_class(target_date)
-    if target_date.saturday?
+  def shift_header_class(shift_day)
+    if shift_day.saturday?
       "shift-header-day shift-sticky-top saturday-header"
-    elsif target_date.sunday? || holiday_jp?(target_date)
+    elsif shift_day.sunday? || shift_day.holiday?
       "shift-header-day shift-sticky-top sunday-header"
     else
       "shift-header-day shift-sticky-top"

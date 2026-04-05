@@ -3,7 +3,7 @@
     <th class="shift-staff-header">スタッフ</th>
     <% shift_days.each do |shift_day| %>
       <% target_date = shift_day.target_date %>
-      <th class="<%= shift_header_class(target_date) %>">
+      <th class="<%= shift_header_class(shift_day) %>">
         <div><%= target_date.strftime("%-m/%-d") %></div>
         <div><%= shift_weekday_label(target_date) %></div>
       </th>

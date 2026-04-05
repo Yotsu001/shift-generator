@@ -27,9 +27,9 @@
     </div>
 
     <div id="<%= edit_leave_form_id %>" class="<%= toggle_form_class(edit_leave_form_id, @open_form_id) %>">
-      <% if defined?(@shift_assignment) && @shift_assignment.present? &&
-            @shift_assignment.errors.any? &&
-            @open_form_id == edit_assignment_form_id %>
+    <% if defined?(@leave_request) && @leave_request.present? &&
+          @leave_request.errors.any? &&
+          @open_form_id == edit_leave_form_id %>
         <div class="form-errors">
           <ul>
             <% @shift_assignment.errors.full_messages.each do |message| %>

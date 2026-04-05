@@ -1,14 +1,14 @@
 <tr>
-  <th class="shift-sticky-left user-name-cell"><%= user.name %></th>
+  <th class="shift-staff-name"><%= employee.name %></th>
 
   <% shift_days.each do |shift_day| %>
-    <% assignment = shift_day.assignment_for(user) %>
-    <% leave_request = shift_day.leave_request_for(user) %>
+    <% assignment = find_shift_assignment(shift_day, employee) %>
+    <% leave_request = find_leave_request(shift_day, employee) %>
 
     <%= render "shift_cell",
-               user: user,
-               shift_day: shift_day,
-               assignment: assignment,
-               leave_request: leave_request %>
+          shift_day: shift_day,
+          employee: employee,
+          assignment: assignment,
+          leave_request: leave_request %>
   <% end %>
 </tr>

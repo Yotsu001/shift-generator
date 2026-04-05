@@ -20,8 +20,7 @@ class ShiftPeriodsController < ApplicationController
   end
 
   def show
-    @shift_days = @shift_period.shift_days.order(:target_date)
-    @users = User.includes(:zones).order(:id)
+    prepare_show_resources
   end
 
   def generate
@@ -33,13 +32,11 @@ class ShiftPeriodsController < ApplicationController
   end
 
   def clear_assignments
-    shift_period = ShiftPeriod.find(params[:id])
-
     ShiftAssignment.joins(:shift_day)
-                  .where(shift_days: { shift_period_id: shift_period.id })
-                  .delete_all
+                   .where(shift_days: { shift_period_id: @shift_period.id })
+                   .delete_all
 
-    redirect_to shift_period_path(shift_period), notice: "割当を全削除しました"
+    redirect_to shift_period_path(@shift_period), notice: "割当を全削除しました"
   end
 
   private
@@ -50,5 +47,13 @@ class ShiftPeriodsController < ApplicationController
 
   def shift_period_params
     params.require(:shift_period).permit(:name, :start_date, :end_date, :status)
+  end
+
+  def prepare_show_resources
+    @employees = Employee.active_ordered
+    @shift_days = @shift_period.shift_days.order(:target_date)
+    @shift_assignments = @shift_period.shift_assignments.includes(:employee, :zone, :shift_day)
+    @leave_requests = @shift_period.leave_requests.includes(:employee, :shift_day)
+    @zones = Zone.all
   end
 end

@@ -1,5 +1,7 @@
 class ShiftPeriod < ApplicationRecord
   has_many :shift_days, dependent: :destroy
+  has_many :shift_assignments, through: :shift_days
+  has_many :leave_requests, through: :shift_days
 
   enum status: { draft: 0, published: 1, locked: 2 }
 
@@ -23,7 +25,8 @@ class ShiftPeriod < ApplicationRecord
     (start_date..end_date).each do |date|
       shift_days.create!(
         target_date: date,
-        day_type: detect_day_type(date))
+        day_type: detect_day_type(date)
+      )
     end
   end
 

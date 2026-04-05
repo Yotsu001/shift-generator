@@ -10,7 +10,7 @@ class LeaveRequestsController < ApplicationController
       redirect_to shift_period_path(@shift_day.shift_period), notice: "希望休を登録しました。"
     else
       prepare_shift_period_show_data
-      @open_form_id = "leave-form-#{@leave_request.user_id}-#{@shift_day.id}"
+      @open_form_id = "leave-form-#{@leave_request.employee_id}-#{@shift_day.id}"
       render "shift_periods/show", status: :unprocessable_entity
     end
   end
@@ -41,14 +41,15 @@ class LeaveRequestsController < ApplicationController
   end
 
   def leave_request_params
-    params.require(:leave_request).permit(:user_id, :note)
+    params.require(:leave_request).permit(:employee_id, :note)
   end
 
   def prepare_shift_period_show_data
     @shift_period = @shift_day.shift_period
-    @shift_days = @shift_period.shift_days
-                              .includes(:leave_requests, shift_assignments: [:user, :zone])
-                              .order(:target_date)
-    @users = User.includes(:zones).order(:id)
+    @employees = Employee.active_ordered
+    @shift_days = @shift_period.shift_days.order(:target_date)
+    @shift_assignments = @shift_period.shift_assignments.includes(:employee, :zone, :shift_day)
+    @leave_requests = @shift_period.leave_requests.includes(:employee, :shift_day)
+    @zones = Zone.all
   end
 end

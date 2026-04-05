@@ -8,34 +8,34 @@ class ShiftDay < ApplicationRecord
   validates :target_date, presence: true
   validates :target_date, uniqueness: { scope: :shift_period_id }
 
-  def leave_requested_by?(user)
-    return false if user.blank?
+  def leave_requested_by?(employee)
+    return false if employee.blank?
 
-    leave_requests.exists?(user_id: user.id)
+    leave_requests.exists?(employee_id: employee.id)
   end
 
-  def assigned_to?(user)
-    return false if user.blank?
+  def assigned_to?(employee)
+    return false if employee.blank?
 
-    shift_assignments.exists?(user_id: user.id)
+    shift_assignments.exists?(employee_id: employee.id)
   end
 
-  def assignment_for(user)
-    return nil if user.blank?
+  def assignment_for(employee)
+    return nil if employee.blank?
 
-    shift_assignments.find_by(user_id: user.id)
+    shift_assignments.find_by(employee_id: employee.id)
   end
 
-  def leave_request_for(user)
-    return nil if user.blank?
+  def leave_request_for(employee)
+    return nil if employee.blank?
 
-    leave_requests.find_by(user_id: user.id)
+    leave_requests.find_by(employee_id: employee.id)
   end
 
-  def assignable_for?(user)
-    return false if user.blank?
-    return false if leave_requested_by?(user)
-    return false if assigned_to?(user)
+  def assignable_for?(employee)
+    return false if employee.blank?
+    return false if leave_requested_by?(employee)
+    return false if assigned_to?(employee)
 
     true
   end

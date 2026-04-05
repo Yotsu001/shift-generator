@@ -6,7 +6,7 @@ module ShiftGeneration
     def initialize(shift_period)
       @shift_period = shift_period
       @shift_days   = shift_period.shift_days.includes(:shift_assignments, :leave_requests).order(:target_date)
-      @users        = User.includes(:zones).order(:id)
+      @employees    = Employee.active_ordered
     end
 
     def call
@@ -15,7 +15,6 @@ module ShiftGeneration
       created_count = 0
 
       ActiveRecord::Base.transaction do
-        # 1. 先に土日祝勤務を確定
         weekend_or_holiday_shift_days.each do |shift_day|
           Rails.logger.debug "---- weekend/holiday shift_day_id=#{shift_day.id} date=#{shift_day.target_date} day_type=#{shift_day.day_type} ----"
 
@@ -24,18 +23,13 @@ module ShiftGeneration
           shift_day.reload
           after_count = shift_day.shift_assignments.count
 
-          delta = after_count - before_count
-          created_count += delta
-
-          Rails.logger.debug "[weekend/holiday] date=#{shift_day.target_date} created=#{delta}"
+          created_count += (after_count - before_count)
         end
 
-        # 2. 次に代償休を確保
         compensation_created_count = assign_weekend_compensatory_days!
         created_count += compensation_created_count
         Rails.logger.debug "[compensation] created_count=#{compensation_created_count}"
 
-        # 3. 最後に平日勤務を埋める
         weekday_shift_days.each do |shift_day|
           Rails.logger.debug "---- weekday shift_day_id=#{shift_day.id} date=#{shift_day.target_date} day_type=#{shift_day.day_type} ----"
 
@@ -44,10 +38,7 @@ module ShiftGeneration
           shift_day.reload
           after_count = shift_day.shift_assignments.count
 
-          delta = after_count - before_count
-          created_count += delta
-
-          Rails.logger.debug "[weekday] date=#{shift_day.target_date} created=#{delta}"
+          created_count += (after_count - before_count)
         end
       end
 
@@ -57,10 +48,10 @@ module ShiftGeneration
 
     private
 
-    attr_reader :shift_period, :shift_days, :users
+    attr_reader :shift_period, :shift_days, :employees
 
     def weekend_or_holiday?(shift_day)
-      shift_day.saturday? || shift_day.sunday? || holiday?(shift_day)
+      shift_day.saturday? || shift_day.sunday? || shift_day.holiday?
     end
 
     # -------------------------
@@ -71,17 +62,17 @@ module ShiftGeneration
 
       created_count = existing_working_assignment_count(shift_day)
 
-      candidate_users_for(shift_day).each do |user|
+      candidate_employees_for(shift_day).each do |employee|
         break if created_count >= weekday_max_assignments_count
 
-        next if shift_day.leave_request_for(user).present?
-        next if shift_day.assignment_for(user).present?
+        next if shift_day.leave_request_for(employee).present?
+        next if shift_day.assignment_for(employee).present?
 
-        zone = selectable_zone_for(user)
+        zone = selectable_zone_for(employee)
         next if zone.blank?
 
         assignment = shift_day.shift_assignments.build(
-          user: user,
+          employee: employee,
           work_type: "day_shift",
           zone: zone
         )
@@ -89,69 +80,53 @@ module ShiftGeneration
         assignment.save!
         created_count += 1
 
-        Rails.logger.debug "[weekday] created assignment_id=#{assignment.id} user_id=#{user.id} zone_name=#{zone.name}"
+        Rails.logger.debug "[weekday] created assignment_id=#{assignment.id} employee_id=#{employee.id} zone_name=#{zone.name}"
       end
     end
 
     # -------------------------
     # 土日祝割当
-    # 不足分だけ補完する
     # -------------------------
     def assign_weekend_or_holiday(shift_day)
       current_assignments = shift_day.shift_assignments.where(work_type: WEEKEND_WORK_TYPES)
-      current_count = current_assignments.count
-
-      Rails.logger.debug "[holiday] date=#{shift_day.target_date} current_count=#{current_count}"
-
-      return if current_count >= 2
+      return if current_assignments.count >= 2
 
       existing_work_types = current_assignments.pluck(:work_type)
       missing_work_types = WEEKEND_WORK_TYPES - existing_work_types
 
-      Rails.logger.debug "[holiday] existing_work_types=#{existing_work_types.inspect}"
-      Rails.logger.debug "[holiday] missing_work_types=#{missing_work_types.inspect}"
+      available_employees = weekend_candidate_employees_for(shift_day)
+      return if available_employees.size < missing_work_types.size
 
-      available_users = weekend_candidate_users_for(shift_day)
-      Rails.logger.debug "[holiday] available_users=#{available_users.map(&:id).inspect}"
-      Rails.logger.debug "[holiday] counts=#{available_users.map { |u| [u.id, weekend_assignment_count(u)] }.inspect}"
-
-      return if available_users.size < missing_work_types.size
-
-      selected_users = select_weekend_users(available_users).first(missing_work_types.size)
+      selected_employees = select_weekend_employees(available_employees).first(missing_work_types.size)
 
       missing_work_types.each_with_index do |work_type, index|
-        user = selected_users[index]
-        next if user.blank?
+        employee = selected_employees[index]
+        next if employee.blank?
 
-        create_weekend_assignment(shift_day, user, work_type)
+        create_weekend_assignment(shift_day, employee, work_type)
       end
     end
 
-    def weekend_candidate_users_for(shift_day)
-      users.reject do |user|
-        shift_day.leave_request_for(user).present? || shift_day.assignment_for(user).present?
+    def weekend_candidate_employees_for(shift_day)
+      employees.reject do |employee|
+        shift_day.leave_request_for(employee).present? || shift_day.assignment_for(employee).present?
       end
     end
 
-    def select_weekend_users(available_users)
-      available_users.sort_by { |user| [weekend_assignment_count(user), user.id] }
+    def select_weekend_employees(available_employees)
+      available_employees.sort_by { |employee| [weekend_assignment_count(employee), employee.id] }
     end
 
-    def create_weekend_assignment(shift_day, user, work_type)
-      Rails.logger.debug "[holiday] creating date=#{shift_day.target_date} user_id=#{user.id} work_type=#{work_type}"
-
-      assignment = shift_day.shift_assignments.create!(
-        user: user,
+    def create_weekend_assignment(shift_day, employee, work_type)
+      shift_day.shift_assignments.create!(
+        employee: employee,
         work_type: work_type
       )
-
-      Rails.logger.debug "[holiday] created assignment_id=#{assignment.id}"
-      assignment
     end
 
-    def weekend_assignment_count(user)
+    def weekend_assignment_count(employee)
       ShiftAssignment.joins(:shift_day)
-                     .where(user: user, shift_days: { shift_period_id: shift_period.id })
+                     .where(employee: employee, shift_days: { shift_period_id: shift_period.id })
                      .where(work_type: WEEKEND_WORK_TYPES)
                      .merge(ShiftDay.where(day_type: %w[saturday sunday holiday]))
                      .count
@@ -166,43 +141,37 @@ module ShiftGeneration
       return if mixed_zone_already_assigned?(shift_day)
       return if existing_working_assignment_count(shift_day) >= weekday_max_assignments_count
 
-      candidates = mixed_zone_candidate_users_for(shift_day)
-      Rails.logger.debug "[mixed] date=#{shift_day.target_date} candidates=#{candidates.map(&:id).inspect}"
-
-      user = candidates.first
-      return if user.blank?
+      candidates = mixed_zone_candidate_employees_for(shift_day)
+      employee = candidates.first
+      return if employee.blank?
 
       assignment = shift_day.shift_assignments.build(
-        user: user,
+        employee: employee,
         work_type: "day_shift",
         zone: mixed_zone
       )
 
       assignment.save!
-      Rails.logger.debug "[mixed] created assignment_id=#{assignment.id} user_id=#{user.id}"
     end
 
     def mixed_zone_already_assigned?(shift_day)
       shift_day.shift_assignments.joins(:zone).exists?(zones: { name: "混合" })
     end
 
-    def mixed_zone_candidate_users_for(shift_day)
-      candidates = users.select do |user|
-        next false if shift_day.leave_request_for(user).present?
-        next false if shift_day.assignment_for(user).present?
-
-        user.zones.exists?(name: "混合")
+    def mixed_zone_candidate_employees_for(shift_day)
+      candidates = employees.reject do |employee|
+        shift_day.leave_request_for(employee).present? || shift_day.assignment_for(employee).present?
       end
 
-      candidates.sort_by do |user|
-        [mixed_assignment_count(user), user.id]
+      candidates.sort_by do |employee|
+        [mixed_assignment_count(employee), employee.id]
       end
     end
 
-    def mixed_assignment_count(user)
+    def mixed_assignment_count(employee)
       ShiftAssignment.joins(:zone, :shift_day)
                      .where(
-                       user: user,
+                       employee: employee,
                        zones: { name: "混合" },
                        shift_days: { shift_period_id: shift_period.id }
                      )
@@ -210,34 +179,27 @@ module ShiftGeneration
     end
 
     # -------------------------
-    # 土日勤務に対する代償休
-    # 土曜勤務 -> off_duty
-    # 日曜勤務 -> holiday
+    # 代償休
     # -------------------------
     def assign_weekend_compensatory_days!
-      created_count = 0
-      created_count += assign_compensatory_off_duty_for_saturday_work!
-      created_count += assign_compensatory_holiday_for_sunday_work!
-      created_count
+      assign_compensatory_off_duty_for_saturday_work! +
+        assign_compensatory_holiday_for_sunday_work!
     end
 
     def assign_compensatory_off_duty_for_saturday_work!
       created_count = 0
 
       saturday_shift_days.each do |shift_day|
-        working_users_on(shift_day).each do |user|
+        working_employees_on(shift_day).each do |employee|
           target_day = find_weekday_for_compensation(
             weekend_shift_day: shift_day,
-            user: user,
+            employee: employee,
             reverse: false
           )
 
-          if target_day.blank?
-            Rails.logger.debug "[compensation] skip off_duty date=#{shift_day.target_date} user_id=#{user.id} reason=no_available_weekday"
-            next
-          end
+          next if target_day.blank?
 
-          assign_rest_day(target_day, user, "off_duty")
+          assign_rest_day(target_day, employee, "off_duty")
           created_count += 1
         end
       end
@@ -249,19 +211,16 @@ module ShiftGeneration
       created_count = 0
 
       sunday_shift_days.each do |shift_day|
-        working_users_on(shift_day).each do |user|
+        working_employees_on(shift_day).each do |employee|
           target_day = find_weekday_for_compensation(
             weekend_shift_day: shift_day,
-            user: user,
+            employee: employee,
             reverse: true
           )
 
-          if target_day.blank?
-            Rails.logger.debug "[compensation] skip holiday date=#{shift_day.target_date} user_id=#{user.id} reason=no_available_weekday"
-            next
-          end
+          next if target_day.blank?
 
-          assign_rest_day(target_day, user, "holiday")
+          assign_rest_day(target_day, employee, "holiday")
           created_count += 1
         end
       end
@@ -277,20 +236,20 @@ module ShiftGeneration
       shift_days.select(&:sunday?)
     end
 
-    def working_users_on(shift_day)
+    def working_employees_on(shift_day)
       shift_day.shift_assignments
                .where(work_type: WEEKEND_WORK_TYPES)
-               .includes(:user)
-               .map(&:user)
+               .includes(:employee)
+               .map(&:employee)
     end
 
-    def find_weekday_for_compensation(weekend_shift_day:, user:, reverse: false)
+    def find_weekday_for_compensation(weekend_shift_day:, employee:, reverse: false)
       candidate_days = compensation_candidate_days_for(weekend_shift_day)
       candidate_days = candidate_days.reverse if reverse
 
       candidate_days.find do |day|
-        next false if day.assignment_for(user).present?
-        next false if day.leave_request_for(user).present?
+        next false if day.assignment_for(employee).present?
+        next false if day.leave_request_for(employee).present?
 
         true
       end
@@ -307,30 +266,24 @@ module ShiftGeneration
       end
     end
 
-    def assign_rest_day(shift_day, user, work_type)
-      assignment = shift_day.shift_assignments.create!(
-        user: user,
+    def assign_rest_day(shift_day, employee, work_type)
+      shift_day.shift_assignments.create!(
+        employee: employee,
         work_type: work_type
       )
-
-      Rails.logger.debug "[compensation] created assignment_id=#{assignment.id} date=#{shift_day.target_date} user_id=#{user.id} work_type=#{work_type}"
-      assignment
     end
 
     # -------------------------
     # 共通
     # -------------------------
-    def candidate_users_for(shift_day)
-      users.reject do |user|
-        shift_day.leave_request_for(user).present? || shift_day.assignment_for(user).present?
+    def candidate_employees_for(shift_day)
+      employees.reject do |employee|
+        shift_day.leave_request_for(employee).present? || shift_day.assignment_for(employee).present?
       end
     end
 
-    def selectable_zone_for(user)
-      user.zones
-          .where.not(name: "混合")
-          .order(:position)
-          .first
+    def selectable_zone_for(_employee)
+      Zone.where.not(name: "混合").order(:position).first
     end
 
     def existing_working_assignment_count(shift_day)

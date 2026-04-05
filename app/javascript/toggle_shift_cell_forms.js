@@ -24,4 +24,3 @@ function setupToggleShiftCellForms() {
 }
 
 window.addEventListener("turbo:load", setupToggleShiftCellForms);
-window.addEventListener("turbo:render", setupToggleShiftCellForms);

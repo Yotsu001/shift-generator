@@ -1,8 +1,24 @@
 module ShiftPeriodsHelper
-  def shift_header_class(shift_day)
-    if shift_day.saturday?
+  def shift_days(shift_period)
+    shift_period.shift_days.order(:target_date)
+  end
+
+  def holiday_jp?(date)
+    defined?(HolidayJp) && HolidayJp.holiday?(date)
+  end
+
+  def find_shift_assignment(shift_day, employee)
+    shift_day.assignment_for(employee)
+  end
+
+  def find_leave_request(shift_day, employee)
+    shift_day.leave_request_for(employee)
+  end
+
+  def shift_header_class(target_date)
+    if target_date.saturday?
       "shift-header-day shift-sticky-top saturday-header"
-    elsif shift_day.sunday? || shift_day.holiday?
+    elsif target_date.sunday? || holiday_jp?(target_date)
       "shift-header-day shift-sticky-top sunday-header"
     else
       "shift-header-day shift-sticky-top"
@@ -55,5 +71,4 @@ module ShiftPeriodsHelper
     classes << "hidden" unless form_id == open_form_id
     classes.join(" ")
   end
-
 end

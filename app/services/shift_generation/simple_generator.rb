@@ -60,7 +60,7 @@ module ShiftGeneration
     attr_reader :shift_period, :shift_days, :users
 
     def weekend_or_holiday?(shift_day)
-      shift_day.saturday? || shift_day.sunday? || shift_day.holiday?
+      shift_day.saturday? || shift_day.sunday? || holiday?(shift_day)
     end
 
     # -------------------------

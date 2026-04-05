@@ -1,5 +1,5 @@
 class ShiftAssignment < ApplicationRecord
-  belongs_to :shift_period
+  belongs_to :shift_day
   belongs_to :employee
   belongs_to :zone, optional: true
 
@@ -40,6 +40,7 @@ class ShiftAssignment < ApplicationRecord
   def zone_must_be_assignable_for_employee
     return if employee.blank? || zone.blank?
     return unless day_shift? || night_shift?
+    return unless employee.respond_to?(:zones)
     return if employee.zones.include?(zone)
 
     errors.add(:zone, "はこの従業員の担当可能区ではありません")
@@ -50,8 +51,7 @@ class ShiftAssignment < ApplicationRecord
     return unless zone_mixed?
 
     relation = ShiftAssignment.where(
-      shift_period_id: shift_period_id,
-      shift_date: shift_date,
+      shift_day_id: shift_day_id,
       zone_id: zone_id
     )
     relation = relation.where.not(id: id) if persisted?
@@ -66,8 +66,7 @@ class ShiftAssignment < ApplicationRecord
     return unless day_shift? || night_shift?
 
     relation = ShiftAssignment.where(
-      shift_period_id: shift_period_id,
-      shift_date: shift_date,
+      shift_day_id: shift_day_id,
       work_type: work_type
     )
     relation = relation.where.not(id: id) if persisted?
@@ -79,22 +78,18 @@ class ShiftAssignment < ApplicationRecord
 
   def cannot_assign_if_leave_requested
     return if employee.blank?
-    return if shift_date.blank?
+    return if shift_day.blank?
     return if off_duty? || holiday?
 
-    if LeaveRequest.exists?(employee_id: employee_id, leave_date: shift_date)
+    if LeaveRequest.exists?(employee_id: employee_id, shift_day_id: shift_day_id)
       errors.add(:base, "希望休が登録されているため勤務を割り当てできません")
     end
   end
 
   def weekend_or_holiday?
-    return false if shift_date.blank?
+    return false if shift_day.blank?
 
-    shift_date.saturday? || shift_date.sunday? || holiday_jp?
-  end
-
-  def holiday_jp?
-    defined?(HolidayJp) && HolidayJp.holiday?(shift_date)
+    shift_day.saturday? || shift_day.sunday? || shift_day.holiday?
   end
 
   def zone_mixed?

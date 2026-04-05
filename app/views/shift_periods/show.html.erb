@@ -15,7 +15,7 @@
       data: { turbo_confirm: "リセットしますか？" } %>
 </p>
 
-<%= render "shift_table", users: @users, shift_days: @shift_days %>
+<%= render "shift_table", employees: @employees, shift_days: shift_days(@shift_period) %>
 
 <p style="margin-top: 16px;">
   <%= link_to "一覧へ戻る", shift_periods_path %>

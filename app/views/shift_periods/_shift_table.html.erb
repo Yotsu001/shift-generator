@@ -3,8 +3,8 @@
     <%= render "shift_table_header", shift_days: shift_days %>
 
     <tbody>
-      <% users.each do |user| %>
-        <%= render "shift_user_row", user: user, shift_days: shift_days %>
+      <% employees.each do |employee| %>
+        <%= render "shift_user_row", employee: employee, shift_days: shift_days %>
       <% end %>
     </tbody>
   </table>

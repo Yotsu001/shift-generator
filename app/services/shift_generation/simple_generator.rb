@@ -284,8 +284,17 @@ module ShiftGeneration
       end
     end
 
-    def selectable_zone_for(_employee)
-      Zone.where.not(name: "混合").order(:position).first
+    def selectable_zone_for(employee)
+      return fallback_regular_zone if employee.blank?
+
+      primary_zone = employee.primary_zone
+      return primary_zone if primary_zone.present? && primary_zone.name != "混合"
+
+      fallback_regular_zone
+    end
+
+    def fallback_regular_zone
+      @fallback_regular_zone ||= Zone.where.not(name: "混合").order(:position).first
     end
 
     def existing_working_assignment_count(shift_day)

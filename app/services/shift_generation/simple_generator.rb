@@ -279,9 +279,21 @@ module ShiftGeneration
     # 共通
     # -------------------------
     def candidate_employees_for(shift_day)
-      employees.reject do |employee|
+      candidates = employees.reject do |employee|
         shift_day.leave_request_for(employee).present? || shift_day.assignment_for(employee).present?
       end
+
+      candidates.sort_by do |employee|
+        [weekday_assignment_count(employee), employee.id]
+      end
+    end
+
+    def weekday_assignment_count(employee)
+      ShiftAssignment.joins(:shift_day)
+                    .where(employee: employee, shift_days: { shift_period_id: shift_period.id })
+                    .where(work_type: %w[day_shift middle_shift])
+                    .where.not(shift_days: { day_type: %w[saturday sunday holiday] })
+                    .count
     end
 
     def selectable_zone_for(employee)

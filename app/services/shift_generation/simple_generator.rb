@@ -78,6 +78,7 @@ module ShiftGeneration
         )
 
         assignment.save!
+        increment_weekday_assignment_count(employee)
         created_count += 1
 
         Rails.logger.debug "[weekday] created assignment_id=#{assignment.id} employee_id=#{employee.id} zone_name=#{zone.name} work_type=#{assignment.work_type}"
@@ -152,6 +153,7 @@ module ShiftGeneration
       )
 
       assignment.save!
+      increment_weekday_assignment_count(employee)
 
       Rails.logger.debug "[mixed] created assignment_id=#{assignment.id} employee_id=#{employee.id} zone_name=#{mixed_zone.name} work_type=#{assignment.work_type}"
     end
@@ -289,11 +291,24 @@ module ShiftGeneration
     end
 
     def weekday_assignment_count(employee)
-      ShiftAssignment.joins(:shift_day)
-                    .where(employee: employee, shift_days: { shift_period_id: shift_period.id })
-                    .where(work_type: %w[day_shift middle_shift])
-                    .where.not(shift_days: { day_type: %w[saturday sunday holiday] })
-                    .count
+      weekday_assignment_counts[employee.id] || 0
+    end
+
+    def weekday_assignment_counts
+      @weekday_assignment_counts ||= begin
+        counts = ShiftAssignment.joins(:shift_day)
+                                .where(shift_days: { shift_period_id: shift_period.id })
+                                .where(work_type: %w[day_shift middle_shift])
+                                .where.not(shift_days: { day_type: %w[saturday sunday holiday] })
+                                .group(:employee_id)
+                                .count
+
+        Hash.new(0).merge(counts)
+      end
+    end
+
+    def increment_weekday_assignment_count(employee)
+      weekday_assignment_counts[employee.id] += 1
     end
 
     def selectable_zone_for(employee)

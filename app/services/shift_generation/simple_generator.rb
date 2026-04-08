@@ -186,8 +186,8 @@ module ShiftGeneration
     # 代償休
     # -------------------------
     def assign_weekend_compensatory_days!
-      assign_compensatory_saturday_off_for_saturday_work! +
-        assign_compensatory_sunday_off_for_sunday_work!
+      assign_compensatory_sunday_off_for_sunday_work! +
+        assign_compensatory_saturday_off_for_saturday_work!
     end
 
     def assign_compensatory_saturday_off_for_saturday_work!
@@ -198,7 +198,8 @@ module ShiftGeneration
           target_day = find_weekday_for_compensation(
             weekend_shift_day: shift_day,
             employee: employee,
-            reverse: false
+            reverse: false,
+            work_type: "saturday_off"
           )
 
           next if target_day.blank?
@@ -219,7 +220,8 @@ module ShiftGeneration
           target_day = find_weekday_for_compensation(
             weekend_shift_day: shift_day,
             employee: employee,
-            reverse: true
+            reverse: true,
+            work_type: "sunday_off"
           )
 
           next if target_day.blank?
@@ -247,15 +249,45 @@ module ShiftGeneration
                .map(&:employee)
     end
 
-    def find_weekday_for_compensation(weekend_shift_day:, employee:, reverse: false)
+    def find_weekday_for_compensation(weekend_shift_day:, employee:, reverse: false, work_type:)
       candidate_days = compensation_candidate_days_for(weekend_shift_day)
-      candidate_days = candidate_days.reverse if reverse
 
-      candidate_days.find do |day|
+      if work_type == "saturday_off"
+        sunday_off_day = compensation_day_for(employee, weekend_shift_day, "sunday_off")
+
+        if sunday_off_day.present?
+          candidate_days = candidate_days.select do |day|
+            day.target_date > sunday_off_day.target_date
+          end
+        end
+      end
+
+      available_days = candidate_days.select do |day|
         next false if day.assignment_for(employee).present?
         next false if day.leave_request_for(employee).present?
 
         true
+      end
+
+      ordered_days =
+        if reverse
+          available_days.sort_by do |day|
+            [existing_working_assignment_count(day), -day.target_date.jd]
+          end
+        else
+          available_days.sort_by do |day|
+            [existing_working_assignment_count(day), day.target_date.jd]
+          end
+        end
+
+      ordered_days.first
+    end
+
+    def compensation_day_for(employee, weekend_shift_day, work_type)
+      candidate_days = compensation_candidate_days_for(weekend_shift_day)
+
+      candidate_days.find do |day|
+        day.shift_assignments.exists?(employee: employee, work_type: work_type)
       end
     end
 
@@ -266,7 +298,8 @@ module ShiftGeneration
       shift_days.select do |day|
         day.target_date >= week_start &&
           day.target_date <= week_end &&
-          !weekend_or_holiday?(day)
+          !weekend_or_holiday?(day) &&
+          !day.target_date.monday?
       end
     end
 

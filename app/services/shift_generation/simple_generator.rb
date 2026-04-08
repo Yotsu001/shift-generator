@@ -98,7 +98,7 @@ module ShiftGeneration
       available_employees = weekend_candidate_employees_for(shift_day)
       return if available_employees.size < missing_work_types.size
 
-      selected_employees = select_weekend_employees(available_employees).first(missing_work_types.size)
+      selected_employees = select_weekend_employees(available_employees, shift_day).first(missing_work_types.size)
 
       missing_work_types.each_with_index do |work_type, index|
         employee = selected_employees[index]
@@ -114,8 +114,14 @@ module ShiftGeneration
       end
     end
 
-    def select_weekend_employees(available_employees)
-      available_employees.sort_by { |employee| [weekend_assignment_count(employee), employee.id] }
+    def select_weekend_employees(available_employees, shift_day)
+      available_employees.sort_by do |employee|
+        [
+          weekend_assignment_count(employee),
+          weekly_assignment_count(employee, shift_day),
+          employee.id
+        ]
+      end
     end
 
     def create_weekend_assignment(shift_day, employee, work_type)
@@ -338,6 +344,17 @@ module ShiftGeneration
 
         Hash.new(0).merge(counts)
       end
+    end
+
+    def weekly_assignment_count(employee, shift_day)
+      week_start = shift_day.target_date.beginning_of_week(:monday)
+      week_end   = shift_day.target_date.end_of_week(:monday)
+
+      ShiftAssignment.joins(:shift_day)
+                    .where(employee: employee, shift_days: { shift_period_id: shift_period.id })
+                    .where(shift_days: { target_date: week_start..week_end })
+                    .where(work_type: %w[day_shift middle_shift saturday_off sunday_off])
+                    .count
     end
 
     def increment_weekday_assignment_count(employee)

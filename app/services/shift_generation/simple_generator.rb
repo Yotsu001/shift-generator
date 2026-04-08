@@ -256,7 +256,7 @@ module ShiftGeneration
     end
 
     def find_weekday_for_compensation(weekend_shift_day:, employee:, reverse: false, work_type:)
-      candidate_days = compensation_candidate_days_for(weekend_shift_day)
+      candidate_days = compensation_candidate_days_for(weekend_shift_day, work_type)
 
       if work_type == "saturday_off"
         sunday_off_day = compensation_day_for(employee, weekend_shift_day, "sunday_off")
@@ -269,7 +269,7 @@ module ShiftGeneration
       end
 
       available_days = candidate_days.select do |day|
-        next false if day.assignment_for(employee).present?
+        next false if employee_assignment_exists_on?(day, employee)
         next false if day.leave_request_for(employee).present?
 
         true
@@ -290,30 +290,49 @@ module ShiftGeneration
     end
 
     def compensation_day_for(employee, weekend_shift_day, work_type)
-      candidate_days = compensation_candidate_days_for(weekend_shift_day)
+      candidate_days = compensation_candidate_days_for(weekend_shift_day, work_type)
 
       candidate_days.find do |day|
-        day.shift_assignments.exists?(employee: employee, work_type: work_type)
+        employee_assignment_exists_on?(day, employee, work_types: work_type)
       end
     end
 
-    def compensation_candidate_days_for(weekend_shift_day)
-      week_start = weekend_shift_day.target_date.beginning_of_week(:monday)
-      week_end   = weekend_shift_day.target_date.end_of_week(:monday)
+    def compensation_candidate_days_for(weekend_shift_day, work_type)
+      case work_type
+      when "saturday_off"
+        week_start = weekend_shift_day.target_date.beginning_of_week(:monday)
+        week_end   = weekend_shift_day.target_date.end_of_week(:monday)
 
-      shift_days.select do |day|
-        day.target_date >= week_start &&
-          day.target_date <= week_end &&
-          !weekend_or_holiday?(day) &&
-          !day.target_date.monday?
+        shift_days.select do |day|
+          day.target_date >= week_start &&
+            day.target_date <= week_end &&
+            !weekend_or_holiday?(day) &&
+            !day.target_date.monday?
+        end
+      when "sunday_off"
+        next_week_start = weekend_shift_day.target_date.next_week(:monday)
+        next_week_end   = next_week_start.end_of_week(:monday)
+
+        shift_days.select do |day|
+          day.target_date >= next_week_start &&
+            day.target_date <= next_week_end &&
+            !weekend_or_holiday?(day) &&
+            !day.target_date.monday?
+        end
+      else
+        []
       end
     end
 
     def assign_rest_day(shift_day, employee, work_type)
-      shift_day.shift_assignments.create!(
+      return if employee_assignment_exists_on?(shift_day, employee)
+
+      assignment = shift_day.shift_assignments.create!(
         employee: employee,
         work_type: work_type
       )
+
+      Rails.logger.debug "[compensation] created assignment_id=#{assignment.id} employee_id=#{employee.id} shift_day_id=#{shift_day.id} work_type=#{work_type}"
     end
 
     # -------------------------
@@ -359,6 +378,12 @@ module ShiftGeneration
 
     def increment_weekday_assignment_count(employee)
       weekday_assignment_counts[employee.id] += 1
+    end
+
+    def employee_assignment_exists_on?(shift_day, employee, work_types: nil)
+      scope = shift_day.shift_assignments.where(employee: employee)
+      scope = scope.where(work_type: work_types) if work_types.present?
+      scope.exists?
     end
 
     def selectable_zone_for(employee)

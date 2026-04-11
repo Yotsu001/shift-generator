@@ -1,26 +1,29 @@
-function setupToggleShiftCellForms() {
-  const buttons = document.querySelectorAll(".toggle-button");
+function handleToggleShiftCellFormClick(event) {
+  const button = event.target.closest('.toggle-button')
+  if (!button) return
 
-  buttons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const targetId = button.dataset.target;
-      const targetForm = document.getElementById(targetId);
+  const targetId = button.dataset.target
+  if (!targetId) return
 
-      if (!targetForm) return;
+  const targetForm = document.getElementById(targetId)
+  if (!targetForm) return
 
-      const cell = button.closest(".shift-cell");
-      if (!cell) return;
+  const cell = button.closest('.shift-cell')
+  if (!cell) return
 
-      const formsInCell = cell.querySelectorAll(".toggle-form");
-      formsInCell.forEach((form) => {
-        if (form.id !== targetId) {
-          form.classList.add("hidden");
-        }
-      });
+  const formsInCell = cell.querySelectorAll('.toggle-form')
+  formsInCell.forEach((form) => {
+    if (form.id !== targetId) {
+      form.classList.add('hidden')
+    }
+  })
 
-      targetForm.classList.toggle("hidden");
-    });
-  });
+  targetForm.classList.toggle('hidden')
 }
 
-window.addEventListener("turbo:load", setupToggleShiftCellForms);
+function setupToggleShiftCellForms() {
+  document.removeEventListener('click', handleToggleShiftCellFormClick)
+  document.addEventListener('click', handleToggleShiftCellFormClick)
+}
+
+window.addEventListener('turbo:load', setupToggleShiftCellForms)

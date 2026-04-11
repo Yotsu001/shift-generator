@@ -4,6 +4,11 @@ class LeaveRequestsController < ApplicationController
   before_action :set_leave_request, only: [:update, :destroy]
 
   def create
+    if @shift_day.shift_period.locked?
+      redirect_to shift_period_path(@shift_day.shift_period), alert: "確定済みのシフト期間では希望休を登録できません。"
+      return
+    end
+
     @leave_request = @shift_day.leave_requests.new(leave_request_params)
 
     if @leave_request.save
@@ -16,6 +21,11 @@ class LeaveRequestsController < ApplicationController
   end
 
   def update
+    if @shift_day.shift_period.locked?
+      redirect_to shift_period_path(@shift_day.shift_period), alert: "確定済みのシフト期間では希望休を更新できません。"
+      return
+    end
+
     if @leave_request.update(leave_request_params)
       redirect_to shift_period_path(@shift_day.shift_period), notice: "希望休を更新しました。"
     else
@@ -26,6 +36,11 @@ class LeaveRequestsController < ApplicationController
   end
 
   def destroy
+    if @shift_day.shift_period.locked?
+      redirect_to shift_period_path(@shift_day.shift_period), alert: "確定済みのシフト期間では希望休を削除できません。"
+      return
+    end
+
     @leave_request.destroy
     redirect_to shift_period_path(@shift_day.shift_period), notice: "希望休を削除しました。"
   end

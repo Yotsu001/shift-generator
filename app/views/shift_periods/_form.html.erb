@@ -1,4 +1,6 @@
-<%= form_with model: @shift_period, local: true, html: { class: "stacked-form" } do |f| %>
+<% date_fields_disabled = @shift_period.persisted? && @shift_period.locked? %>
+
+<%= form_with model: @shift_period, local: true, html: { class: "stacked-form shift-period-form" } do |f| %>
   <% if @shift_period.errors.any? %>
     <div class="error-messages">
       <ul>
@@ -17,14 +19,18 @@
   <div class="form-row">
     <div class="form-group">
       <%= f.label :start_date, "開始日" %>
-      <%= f.date_field :start_date %>
+      <%= f.date_field :start_date, class: "js-date-input", data: { disable_manual_entry: true }, disabled: date_fields_disabled %>
     </div>
 
     <div class="form-group">
       <%= f.label :end_date, "終了日" %>
-      <%= f.date_field :end_date %>
+      <%= f.date_field :end_date, class: "js-date-input", data: { disable_manual_entry: true }, disabled: date_fields_disabled %>
     </div>
   </div>
+
+  <% if date_fields_disabled %>
+    <p class="form-hint">確定済みのため、日付は変更できません。</p>
+  <% end %>
 
   <% if @shift_period.persisted? %>
     <div class="form-group">

@@ -3,10 +3,12 @@
     <div>
       <p class="eyebrow">シフト期間</p>
       <h1 class="page-title">シフト期間詳細</h1>
-      <p class="page-subtitle">期間情報とシフト表を同じ流れで確認し、必要な操作にすぐ移れます。</p>
+      <p class="page-subtitle">期間情報とシフト表を同じ流れで確認できる、見通しのよい詳細画面です。</p>
     </div>
     <div class="page-actions">
-      <%= link_to "編集", edit_shift_period_path(@shift_period), class: "button button-secondary" %>
+      <% unless @shift_period.locked? %>
+        <%= link_to "編集", edit_shift_period_path(@shift_period), class: "button button-secondary" %>
+      <% end %>
       <%= link_to "一覧へ戻る", shift_periods_path, class: "button button-ghost" %>
     </div>
   </div>
@@ -19,10 +21,14 @@
     <div class="section-header">
       <div>
         <h2 class="section-title">シフト表</h2>
-        <p class="section-copy">表の中で勤務登録、編集、希望休登録まで完結できます。</p>
+        <% if @shift_period.locked? %>
+          <p class="section-copy">このシフト期間は確定済みのため、詳細画面では閲覧のみ可能です。</p>
+        <% else %>
+          <p class="section-copy">表の中で勤務登録、編集、希望休登録まで完結できます。</p>
+        <% end %>
       </div>
       <% if @shift_period.locked? %>
-        <p class="auth-note">このシフト期間は確定済みのため、自動生成とリセットは実行できません。</p>
+        <p class="auth-note">このシフト期間は確定済みのため、詳細画面では編集・登録・削除を行えません。</p>
       <% else %>
         <div class="page-actions">
           <%= button_to "自動生成",
@@ -42,5 +48,3 @@
     <%= render "shift_table", employees: @employees, shift_days: shift_days(@shift_period) %>
   </section>
 </section>
-
-

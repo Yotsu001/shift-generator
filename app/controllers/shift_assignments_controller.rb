@@ -4,6 +4,11 @@ class ShiftAssignmentsController < ApplicationController
   before_action :set_shift_assignment, only: [:update, :destroy]
 
   def create
+    if @shift_day.shift_period.locked?
+      redirect_to shift_period_path(@shift_day.shift_period), alert: "確定済みのシフト期間では割当を登録できません。"
+      return
+    end
+
     @shift_assignment = @shift_day.shift_assignments.new(shift_assignment_params)
 
     if @shift_assignment.save
@@ -16,6 +21,11 @@ class ShiftAssignmentsController < ApplicationController
   end
 
   def update
+    if @shift_day.shift_period.locked?
+      redirect_to shift_period_path(@shift_day.shift_period), alert: "確定済みのシフト期間では割当を更新できません。"
+      return
+    end
+
     if @shift_assignment.update(shift_assignment_params)
       redirect_to shift_period_path(@shift_day.shift_period), notice: "割当を更新しました。"
     else
@@ -26,6 +36,11 @@ class ShiftAssignmentsController < ApplicationController
   end
 
   def destroy
+    if @shift_day.shift_period.locked?
+      redirect_to shift_period_path(@shift_day.shift_period), alert: "確定済みのシフト期間では割当を削除できません。"
+      return
+    end
+
     @shift_assignment.destroy
     redirect_to shift_period_path(@shift_day.shift_period), notice: "割当を削除しました。"
   end

@@ -1,7 +1,17 @@
-<h1>スタッフ新規登録</h1>
+<section class="page-shell page-shell--narrow">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Staff</p>
+      <h1 class="page-title">スタッフ新規登録</h1>
+      <p class="page-subtitle">必要な情報を順に入力できる、見通しのよい登録画面です。</p>
+    </div>
+  </div>
 
-<%= render 'form' %>
+  <section class="card">
+    <%= render 'form' %>
+  </section>
 
-<p>
-  <%= link_to 'スタッフ一覧へ戻る', employees_path %>
-</p>
+  <div class="page-actions">
+    <%= link_to 'スタッフ一覧へ戻る', employees_path, class: "button button-ghost" %>
+  </div>
+</section>

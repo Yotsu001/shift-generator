@@ -1,5 +1,5 @@
 <tr>
-  <th class="shift-staff-name"><%= employee.name %></th>
+  <th class="shift-staff-name shift-sticky-left"><%= employee.name %></th>
 
   <% shift_days.each do |shift_day| %>
     <% assignment = find_shift_assignment(shift_day, employee) %>

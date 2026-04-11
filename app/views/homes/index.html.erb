@@ -1,25 +1,57 @@
-<h1>シフト表作成アプリ</h1>
+<section class="hero-card">
+  <div class="page-header page-header--compact">
+    <div>
+      <p class="eyebrow">Shift Generator</p>
+      <h1 class="page-title">落ち着いて扱えるシフト管理</h1>
+      <p class="page-subtitle">
+        日々の運用に必要な情報をやさしく整理し、はじめて使う人にも迷いにくい画面を目指したトップページです。
+      </p>
+    </div>
+  </div>
 
-<% if user_signed_in? %>
-  <p>ログイン中です</p>
-  <p>ようこそ、<%= current_user.name %>さん</p>
-  <p><%= current_user.email %></p>
+  <% if user_signed_in? %>
+    <div class="dashboard-grid">
+      <section class="card">
+        <h2 class="section-title">ログイン情報</h2>
+        <dl class="detail-list">
+          <div>
+            <dt>お名前</dt>
+            <dd><%= current_user.name %></dd>
+          </div>
+          <div>
+            <dt>メールアドレス</dt>
+            <dd><%= current_user.email %></dd>
+          </div>
+          <div>
+            <dt>主担当区</dt>
+            <dd><%= current_user.employee&.primary_zone&.name || "未設定" %></dd>
+          </div>
+          <div>
+            <dt>担当可能区</dt>
+            <dd><%= current_user.employee&.zones&.order(:position)&.pluck(:name)&.join("、").presence || "未設定" %></dd>
+          </div>
+        </dl>
+      </section>
 
-  <p>
-    <strong>主担当区:</strong>
-    <%= current_user.employee&.primary_zone&.name || "未設定" %>
-  </p>
-
-  <p>
-    <strong>担当可能区:</strong>
-    <%= current_user.employee&.zones&.order(:position)&.pluck(:name)&.join("、").presence || "未設定" %>
-  </p>
-
-  <%= link_to "プロフィール編集", edit_user_registration_path %><br>
-  <%= link_to "シフト期間一覧へ", shift_periods_path %>
-  <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete } %>
-<% else %>
-  <p>ログインしていません</p>
-  <%= link_to "新規登録", new_user_registration_path %>
-  <%= link_to "ログイン", new_user_session_path %>
-<% end %>
+      <section class="card">
+        <h2 class="section-title">よく使う操作</h2>
+        <div class="action-stack">
+          <%= link_to "シフト期間を見る", shift_periods_path, class: "button button-primary" %>
+          <%= link_to "プロフィールを編集", edit_user_registration_path, class: "button button-secondary" %>
+          <%= link_to "スタッフ一覧を見る", employees_path, class: "button button-ghost" %>
+        </div>
+      </section>
+    </div>
+  <% else %>
+    <section class="card auth-card">
+      <h2 class="section-title">はじめて利用する方へ</h2>
+      <p class="section-copy">
+        まずはログインまたは新規登録から始められます。必要な機能にすぐたどり着けるよう、画面全体をシンプルに整えています。
+      </p>
+      <div class="action-stack action-stack--inline">
+        <%= link_to "ログイン", new_user_session_path, class: "button button-primary" %>
+        <%= link_to "新規登録", new_user_registration_path, class: "button button-secondary" %>
+      </div>
+    </section>
+  <% end %>
+</section>

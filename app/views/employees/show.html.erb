@@ -11,6 +11,11 @@
 </p>
 
 <p>
+  <strong>担当可能区:</strong>
+  <%= @employee.zones.order(:position).pluck(:name).join('、').presence || '未設定' %>
+</p>
+
+<p>
   <strong>担当区:</strong>
   <%= @employee.primary_zone&.name || '未設定' %>
 </p>

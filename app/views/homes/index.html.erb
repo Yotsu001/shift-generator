@@ -7,7 +7,7 @@
 
   <p>
     <strong>担当可能区:</strong>
-    <%= current_user.zones.order(:position).pluck(:name).join("、") %>
+    <%= current_user.employee&.zones&.order(:position)&.pluck(:name)&.join("、").presence || "未設定" %>
   </p>
 
   <%= link_to "プロフィール編集", edit_user_registration_path %><br>

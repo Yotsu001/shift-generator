@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_04_05_052356) do
+ActiveRecord::Schema[7.1].define(version: 2026_04_11_091000) do
+  create_table "employee_zones", charset: "utf8mb3", force: :cascade do |t|
+    t.bigint "employee_id", null: false
+    t.bigint "zone_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["employee_id", "zone_id"], name: "index_employee_zones_on_employee_id_and_zone_id", unique: true
+    t.index ["employee_id"], name: "index_employee_zones_on_employee_id"
+    t.index ["zone_id"], name: "index_employee_zones_on_zone_id"
+  end
+
   create_table "employees", charset: "utf8mb3", force: :cascade do |t|
     t.string "name", null: false
     t.boolean "active", default: true, null: false
@@ -76,16 +86,6 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_05_052356) do
     t.index ["start_date", "end_date"], name: "index_shift_periods_on_start_date_and_end_date", unique: true
   end
 
-  create_table "user_zones", charset: "utf8mb3", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "zone_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["user_id", "zone_id"], name: "index_user_zones_on_user_id_and_zone_id", unique: true
-    t.index ["user_id"], name: "index_user_zones_on_user_id"
-    t.index ["zone_id"], name: "index_user_zones_on_zone_id"
-  end
-
   create_table "users", charset: "utf8mb3", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -110,6 +110,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_05_052356) do
     t.index ["position"], name: "index_zones_on_position"
   end
 
+  add_foreign_key "employee_zones", "employees"
+  add_foreign_key "employee_zones", "zones"
   add_foreign_key "employees", "users"
   add_foreign_key "employees", "zones", column: "primary_zone_id"
   add_foreign_key "leave_requests", "employees"
@@ -120,6 +122,4 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_05_052356) do
   add_foreign_key "shift_assignments", "users"
   add_foreign_key "shift_assignments", "zones"
   add_foreign_key "shift_days", "shift_periods"
-  add_foreign_key "user_zones", "users"
-  add_foreign_key "user_zones", "zones"
 end

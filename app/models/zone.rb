@@ -1,7 +1,7 @@
 class Zone < ApplicationRecord
   has_many :shift_assignments, dependent: :restrict_with_exception
-  has_many :user_zones, dependent: :destroy
-  has_many :users, through: :user_zones
+  has_many :employee_zones, dependent: :destroy
+  has_many :employees, through: :employee_zones
 
   validates :name, presence: true, uniqueness: true
   validates :position, presence: true

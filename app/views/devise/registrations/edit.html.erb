@@ -8,16 +8,6 @@
     <p><%= f.text_field :name, autocomplete: "name" %></p>
   </div>
 
-  <div>
-  <%= f.label :zone_ids, "担当可能区" %><br>
-  <%= f.collection_check_boxes :zone_ids, Zone.active_ordered, :id, :name do |b| %>
-    <div>
-      <%= b.check_box %>
-      <%= b.label %>
-    </div>
-  <% end %>
-</div>
-
   <div class="field">
     <p><%= f.label :email, "メールアドレス" %></p>
     <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>

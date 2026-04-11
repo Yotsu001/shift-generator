@@ -43,6 +43,7 @@ class ShiftAssignment < ApplicationRecord
   def zone_must_be_assignable_for_employee
     return if employee.blank? || zone.blank?
     return unless day_shift? || middle_shift? || night_shift?
+    return if zone_mixed?
     return unless employee.respond_to?(:zones)
     return if employee.zones.include?(zone)
 

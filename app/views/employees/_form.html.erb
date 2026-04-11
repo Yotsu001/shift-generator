@@ -11,33 +11,35 @@
   <% end %>
 
   <div class="form-group">
-    <%= form.label :name, 'スタッフ名' %><br>
+    <%= form.label :name, 'スタッフ名' %>
     <%= form.text_field :name %>
   </div>
 
   <div class="form-group">
-    <%= form.label :zone_ids, '担当可能区' %><br>
-    <%= form.collection_check_boxes :zone_ids, Zone.regular_ordered, :id, :name do |b| %>
-      <div>
-        <%= b.check_box class: 'employee-zone-checkbox' %>
-        <%= b.label %>
-      </div>
-    <% end %>
+    <%= form.label :zone_ids, '担当可能区' %>
+    <div class="checkbox-grid">
+      <%= form.collection_check_boxes :zone_ids, Zone.regular_ordered, :id, :name do |b| %>
+        <div class="checkbox-card">
+          <%= b.check_box class: 'employee-zone-checkbox' %>
+          <%= b.label %>
+        </div>
+      <% end %>
+    </div>
   </div>
 
   <div class="form-group">
-    <%= form.label :primary_zone_id, '主担当区' %><br>
+    <%= form.label :primary_zone_id, '主担当区' %>
     <%= form.collection_select :primary_zone_id, Zone.regular_ordered, :id, :name, { include_blank: '未設定' }, { class: 'employee-primary-zone-select' } %>
-    <p>担当可能区の中から選択します。</p>
+    <p class="form-hint">担当可能区の中から選択します。</p>
   </div>
 
-  <div class="form-group">
+  <div class="form-group form-group--inline">
     <%= form.label :weekend_work_disabled, '土日祝出勤不可にする' %>
     <%= form.check_box :weekend_work_disabled %>
   </div>
 
   <% if @employee.has_attribute?(:mixed_zone_preferred) %>
-    <div class="form-group">
+    <div class="form-group form-group--inline">
       <%= form.label :mixed_zone_preferred, '混合区担当候補にする' %>
       <%= form.check_box :mixed_zone_preferred %>
     </div>

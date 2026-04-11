@@ -1,16 +1,26 @@
-<h2>Resend unlock instructions</h2>
-
-<%= form_for(resource, as: resource_name, url: unlock_path(resource_name), html: { method: :post }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
-
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
+<section class="page-shell page-shell--narrow auth-page">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">アカウント</p>
+      <h1 class="page-title">ロック解除メールを再送する</h1>
+      <p class="page-subtitle">アカウントがロックされた場合は、解除用の案内をメールで受け取れます。</p>
+    </div>
   </div>
 
-  <div class="actions">
-    <%= f.submit "Resend unlock instructions" %>
-  </div>
-<% end %>
+  <section class="card auth-card auth-card--form">
+    <%= form_for(resource, as: resource_name, url: unlock_path(resource_name), html: { method: :post, class: "stacked-form auth-form" }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
 
-<%= render "devise/shared/links" %>
+      <div class="form-group">
+        <%= f.label :email, "メールアドレス" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+      </div>
+
+      <div class="form-actions">
+        <%= f.submit "ロック解除メールを再送する" %>
+      </div>
+    <% end %>
+
+    <%= render "devise/shared/links" %>
+  </section>
+</section>

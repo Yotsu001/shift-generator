@@ -1,47 +1,62 @@
-<h2>Edit <%= resource_name.to_s.humanize %></h2>
-
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
-
-  <div>
-    <p><%= f.label :name, "名前" %></p>
-    <p><%= f.text_field :name, autocomplete: "name" %></p>
+<section class="page-shell page-shell--narrow auth-page">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">アカウント</p>
+      <h1 class="page-title">プロフィール編集</h1>
+      <p class="page-subtitle">登録情報を確認しながら、必要な項目だけやさしく更新できる画面に整えています。</p>
+    </div>
   </div>
 
-  <div class="field">
-    <p><%= f.label :email, "メールアドレス" %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
-  </div>
+  <section class="card auth-card auth-card--form">
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, class: "stacked-form auth-form" }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
 
-  <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-    <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
-  <% end %>
+      <div class="form-group">
+        <%= f.label :name, "名前" %>
+        <%= f.text_field :name, autocomplete: "name" %>
+      </div>
 
-  <div class="field">
-    <p><%= f.label :password, "パスワード" %> <i>(変更したくない場合は空白のままにしてください)</i></p>
-    <p><%= f.password_field :password, autocomplete: "new-password" %></p>
-    <% if @minimum_password_length %>
-      <p><em><%= @minimum_password_length %> 文字以上</em></p>
+      <div class="form-group">
+        <%= f.label :email, "メールアドレス" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+      </div>
+
+      <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+        <p class="auth-note">確認待ちのメールアドレス: <%= resource.unconfirmed_email %></p>
+      <% end %>
+
+      <div class="form-group">
+        <%= f.label :password, "新しいパスワード" %>
+        <p class="form-hint">変更しない場合は空欄のままにしてください。</p>
+        <% if @minimum_password_length %>
+          <p class="form-hint"><%= @minimum_password_length %>文字以上で入力してください。</p>
+        <% end %>
+        <%= f.password_field :password, autocomplete: "new-password" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :password_confirmation, "パスワード（確認用）" %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :current_password, "現在のパスワード" %>
+        <p class="form-hint">変更を確定するために必要です。</p>
+        <%= f.password_field :current_password, autocomplete: "current-password" %>
+      </div>
+
+      <div class="form-actions">
+        <%= f.submit "更新する" %>
+      </div>
     <% end %>
-  </div>
+  </section>
 
-  <div class="field">
-    <p><%= f.label :password_confirmation, "パスワード（確認用）" %></p>
-    <p><%= f.password_field :password_confirmation, autocomplete: "new-password" %></p>
-  </div>
-
-  <div class="field">
-    <p><%= f.label :current_password, "現在のパスワード" %> <i>(変更を確認するために現在のパスワードが必要です)</i></p>
-    <p><%= f.password_field :current_password, autocomplete: "current-password" %></p>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Update" %>
-  </div>
-<% end %>
-
-<h3>Cancel my account</h3>
-
-<div>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete %></div>
-
-<%= link_to "Back", :back %>
+  <section class="card auth-card auth-card--danger">
+    <h2 class="section-title">アカウントの削除</h2>
+    <p class="section-copy">今後利用しない場合のみ実行してください。削除すると元に戻せません。</p>
+    <div class="page-actions">
+      <%= button_to "アカウントを削除する", registration_path(resource_name), class: "button button-danger", data: { confirm: "本当に削除しますか？", turbo_confirm: "本当に削除しますか？" }, method: :delete %>
+      <%= link_to "トップへ戻る", root_path, class: "button button-ghost" %>
+    </div>
+  </section>
+</section>

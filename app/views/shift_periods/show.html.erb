@@ -1,22 +1,46 @@
-<h1>シフト期間詳細</h1>
+<section class="page-shell shift-page">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">シフト期間</p>
+      <h1 class="page-title">シフト期間詳細</h1>
+      <p class="page-subtitle">期間情報とシフト表を同じ流れで確認し、必要な操作にすぐ移れます。</p>
+    </div>
+    <div class="page-actions">
+      <%= link_to "編集", edit_shift_period_path(@shift_period), class: "button button-secondary" %>
+      <%= link_to "一覧へ戻る", shift_periods_path, class: "button button-ghost" %>
+    </div>
+  </div>
 
-<%= render "shift_period_summary", shift_period: @shift_period %>
+  <section class="card">
+    <%= render "shift_period_summary", shift_period: @shift_period %>
+  </section>
 
-<h2>シフト表</h2>
+  <section class="card">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">シフト表</h2>
+        <p class="section-copy">表の中で勤務登録、編集、希望休登録まで完結できます。</p>
+      </div>
+      <% if @shift_period.locked? %>
+        <p class="auth-note">このシフト期間は確定済みのため、自動生成とリセットは実行できません。</p>
+      <% else %>
+        <div class="page-actions">
+          <%= button_to "自動生成",
+              generate_shift_period_path(@shift_period),
+              method: :post,
+              class: "button button-primary" %>
 
-<p style="margin-bottom: 16px;">
-  <%= button_to "自動生成",
-      generate_shift_period_path(@shift_period),
-      method: :post %>
+          <%= button_to "リセット",
+              clear_assignments_shift_period_path(@shift_period),
+              method: :delete,
+              class: "button button-danger",
+              data: { turbo_confirm: "リセットしますか？" } %>
+        </div>
+      <% end %>
+    </div>
 
-  <%= button_to "リセット",
-      clear_assignments_shift_period_path(@shift_period),
-      method: :delete,
-      data: { turbo_confirm: "リセットしますか？" } %>
-</p>
+    <%= render "shift_table", employees: @employees, shift_days: shift_days(@shift_period) %>
+  </section>
+</section>
 
-<%= render "shift_table", employees: @employees, shift_days: shift_days(@shift_period) %>
 
-<p style="margin-top: 16px;">
-  <%= link_to "一覧へ戻る", shift_periods_path %>
-</p>

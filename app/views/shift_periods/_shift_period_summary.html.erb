@@ -1,4 +1,18 @@
-<p><strong>名称:</strong> <%= shift_period.name %></p>
-<p><strong>開始日:</strong> <%= shift_period.start_date %></p>
-<p><strong>終了日:</strong> <%= shift_period.end_date %></p>
-<p><strong>状態:</strong> <%= shift_period.status %></p>
+<dl class="detail-list detail-list--grid">
+  <div>
+    <dt>名称</dt>
+    <dd><%= shift_period.name %></dd>
+  </div>
+  <div>
+    <dt>開始日</dt>
+    <dd><%= shift_period.start_date %></dd>
+  </div>
+  <div>
+    <dt>終了日</dt>
+    <dd><%= shift_period.end_date %></dd>
+  </div>
+  <div>
+    <dt>状態</dt>
+    <dd><span class="status-pill"><%= shift_period_status_label(shift_period) %></span></dd>
+  </div>
+</dl>

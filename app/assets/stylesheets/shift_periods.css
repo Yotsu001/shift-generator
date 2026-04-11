@@ -1,80 +1,11 @@
-.shift-table {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-.shift-table th,
-.shift-table td {
-  border: 1px solid #ccc;
-  padding: 8px;
-}
-
-.shift-header-user {
-  min-width: 120px;
-}
-
-.shift-header-day {
-  min-width: 180px;
-}
-
-.shift-cell {
-  vertical-align: top;
-}
-
-.leave-request-cell {
-  background-color: #fff3cd;
-}
-
-.working-cell {
-  background-color: #dbeafe;
-}
-
-.holiday-cell {
-  background-color: #e5e7eb;
-}
-
-.empty-cell {
-  background-color: #ffffff;
-}
-
-.shift-cell p {
-  margin: 0 0 6px 0;
-}
-
-.shift-cell strong {
-  font-size: 14px;
-}
-
-.saturday-header {
-  background-color: #dbeafe;
-}
-
-.sunday-header {
-  background-color: #fee2e2;
-}
-
-.hidden {
-  display: none;
-}
-
-.cell-action-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.toggle-form {
-  margin-top: 8px;
-}
-
-.toggle-button {
-  cursor: pointer;
-}
-
 .shift-table-wrapper {
-  overflow-x: auto;
-  max-width: 100%;
-  border: 1px solid #ccc;
+  max-height: min(74vh, 920px);
+  overflow: auto;
+  position: relative;
+  border: 1px solid rgba(199, 186, 167, 0.6);
+  border-radius: 18px;
+  background: var(--surface-strong);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
 }
 
 .shift-table {
@@ -82,170 +13,157 @@
   border-spacing: 0;
   width: max-content;
   min-width: 100%;
+  font-size: 12px;
+  line-height: 1.4;
 }
 
 .shift-table th,
 .shift-table td {
-  border-right: 1px solid #ccc;
-  border-bottom: 1px solid #ccc;
-  padding: 8px;
+  border-right: 1px solid rgba(221, 211, 196, 0.85);
+  border-bottom: 1px solid rgba(221, 211, 196, 0.85);
+  padding: 8px 9px;
   background-clip: padding-box;
 }
 
-.shift-header-user {
+.shift-table thead th {
+  border-top: none;
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+
+.shift-staff-header,
+.shift-staff-name {
   min-width: 120px;
 }
 
-.shift-header-day {
-  min-width: 180px;
-}
-
 .shift-cell {
-  min-width: 180px;
+  min-width: 138px;
   vertical-align: top;
+  background-color: rgba(255, 253, 249, 0.9);
 }
 
 .shift-sticky-top {
   position: sticky;
   top: 0;
   z-index: 20;
-  background-color: #fff;
+  background-color: #f8f4ee;
+  box-shadow: 0 1px 0 rgba(199, 186, 167, 0.8);
 }
 
 .shift-sticky-left {
   position: sticky;
   left: 0;
-  z-index: 10;
-  background-color: #fff;
+  z-index: 15;
+  background-color: #fffaf4;
+  box-shadow: 1px 0 0 rgba(199, 186, 167, 0.8);
 }
 
 .shift-corner-cell {
   z-index: 30;
+  box-shadow: 1px 0 0 rgba(199, 186, 167, 0.8), 0 1px 0 rgba(199, 186, 167, 0.8);
 }
 
-.user-name-cell {
-  font-weight: bold;
+.shift-staff-header,
+.shift-day-header,
+.shift-staff-name {
+  color: var(--heading);
+  font-weight: 700;
 }
 
-.saturday-header {
-  background-color: #dbeafe;
+.shift-staff-name {
+  font-size: 12px;
 }
 
-.sunday-header {
-  background-color: #fee2e2;
-}
-
-.leave-request-cell {
-  background-color: #fff3cd;
-}
-
-.working-cell {
-  background-color: #dbeafe;
-}
-
-.holiday-cell {
-  background-color: #e5e7eb;
-}
-
-.empty-cell {
-  background-color: #ffffff;
-}
-
-.hidden {
-  display: none;
-}
-
-.cell-action-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.toggle-form {
-  margin-top: 8px;
-}
-
-.toggle-button {
-  cursor: pointer;
+.shift-day-header {
+  min-width: 82px;
+  font-size: 11px;
+  line-height: 1.3;
 }
 
 .shift-cell p {
-  margin: 0 0 6px 0;
-}
-
-.shift-cell strong {
-  font-size: 14px;
+  margin: 0 0 5px;
 }
 
 .shift-badge {
   display: inline-block;
   padding: 2px 8px;
   border-radius: 9999px;
-  font-size: 12px;
-  font-weight: bold;
-  line-height: 1.4;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.35;
 }
 
 .shift-badge-day {
-  background-color: #bfdbfe;
-  color: #1e3a8a;
+  background-color: #d8e7e1;
+  color: #365d55;
 }
 
 .shift-badge-night {
-  background-color: #c7d2fe;
-  color: #312e81;
+  background-color: #dfe0ef;
+  color: #4d5078;
 }
 
 .shift-badge-off-duty {
-  background-color: #d1d5db;
-  color: #374151;
+  background-color: #ebe6dd;
+  color: #655f59;
 }
 
 .shift-badge-holiday {
-  background-color: #e5e7eb;
-  color: #4b5563;
+  background-color: #efebe4;
+  color: #6a655f;
 }
 
 .shift-badge-leave-request {
-  background-color: #fde68a;
-  color: #92400e;
+  background-color: #f1dfbf;
+  color: #8a6841;
 }
 
 .shift-zone-name {
-  margin-top: 6px;
-  font-size: 13px;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--text-soft);
 }
 
 .saturday-column {
-  background-image: linear-gradient(rgba(219, 234, 254, 0.35), rgba(219, 234, 254, 0.35));
+  background-image: linear-gradient(rgba(210, 227, 222, 0.4), rgba(210, 227, 222, 0.4));
 }
 
 .sunday-column {
-  background-image: linear-gradient(rgba(254, 226, 226, 0.4), rgba(254, 226, 226, 0.4));
+  background-image: linear-gradient(rgba(244, 226, 218, 0.45), rgba(244, 226, 218, 0.45));
 }
 
 .action-button {
-  border: none;
-  border-radius: 6px;
-  padding: 6px 10px;
-  font-size: 12px;
-  font-weight: bold;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 5px 9px;
+  font-size: 11px;
+  font-weight: 700;
   cursor: pointer;
+  line-height: 1.2;
 }
 
 .action-button-primary {
-  background-color: #2563eb;
+  background-color: var(--accent);
   color: #ffffff;
 }
 
 .action-button-secondary {
-  background-color: #f59e0b;
-  color: #ffffff;
+  background-color: #e8d8c0;
+  color: #7b6042;
 }
 
 .action-button-edit {
-  background-color: #6b7280;
-  color: #ffffff;
+  background-color: #e9e4da;
+  color: #4f514e;
+}
+
+.action-button-danger {
+  background-color: var(--danger-soft);
+  color: var(--danger);
+  padding: 3px 7px;
+  font-size: 10px;
+  line-height: 1.1;
+  border-radius: 999px;
 }
 
 .cell-action-buttons {
@@ -259,57 +177,43 @@
   flex-direction: column;
   gap: 8px;
   margin-top: 8px;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(255, 251, 245, 0.92);
+  border: 1px solid rgba(221, 211, 196, 0.72);
 }
 
 .compact-form label {
-  font-size: 12px;
-  font-weight: bold;
+  font-size: 11px;
 }
 
-.compact-form select,
-.compact-form input[type="text"] {
-  width: 100%;
-  max-width: 160px;
-  padding: 4px 6px;
-  font-size: 12px;
-  box-sizing: border-box;
+.compact-form input[type="text"],
+.compact-form select {
+  min-height: 34px;
+  padding: 6px 8px;
+  font-size: 11px;
 }
 
 .compact-form input[type="submit"] {
-  width: 100%;
-  max-width: 160px;
-  padding: 6px 8px;
-  border: none;
-  border-radius: 6px;
-  background-color: #111827;
-  color: #ffffff;
-  font-size: 12px;
-  font-weight: bold;
-  cursor: pointer;
+  min-height: 34px;
+  padding: 7px 10px;
+  font-size: 11px;
+}
+
+.compact-form__actions {
+  margin-top: 2px;
 }
 
 .toggle-form {
   margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid #d1d5db;
 }
 
-.shift-cell {
-  min-width: 180px;
-  vertical-align: top;
-}
-
-.shift-zone-name {
-  margin-top: 6px;
-  font-size: 13px;
+.toggle-button {
+  cursor: pointer;
 }
 
 .hidden {
   display: none;
-}
-
-.shift-table {
-  font-size: 13px;
 }
 
 .shift-table th {
@@ -320,26 +224,45 @@
   text-align: left;
 }
 
-.flash-wrapper {
-  margin: 16px;
+.leave-request-cell {
+  background-color: #f7efdb;
 }
 
-.flash-message {
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 12px;
-  font-size: 14px;
-  font-weight: bold;
+.working-cell {
+  background-color: #edf5f1;
 }
 
-.flash-notice {
-  background-color: #d1fae5;
-  color: #065f46;
-  border: 1px solid #10b981;
+.holiday-cell {
+  background-color: #f0ede8;
 }
 
-.flash-alert {
-  background-color: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #ef4444;
+.empty-cell {
+  background-color: rgba(255, 253, 249, 0.92);
+}
+
+.saturday-header {
+  background-color: #e3efe9;
+}
+
+.sunday-header {
+  background-color: #f4e8e4;
+}
+
+@media (max-width: 840px) {
+  .shift-table-wrapper {
+    max-height: 70vh;
+  }
+
+  .shift-staff-header,
+  .shift-staff-name {
+    min-width: 108px;
+  }
+
+  .shift-day-header {
+    min-width: 74px;
+  }
+
+  .shift-cell {
+    min-width: 126px;
+  }
 }

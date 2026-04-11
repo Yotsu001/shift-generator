@@ -10,22 +10,54 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <div class="flash-wrapper">
-      <% if notice.present? %>
-        <div class="flash-message flash-notice">
-          <%= notice %>
+  <body class="app-body">
+    <header class="app-header">
+      <div class="app-header__inner">
+        <div>
+          <%= link_to "ShiftGenerator", root_path, class: "app-brand" %>
+          <p class="app-brand__tagline">安心して扱える、やわらかなシフト管理</p>
         </div>
-      <% end %>
 
-      <% if alert.present? %>
-        <div class="flash-message flash-alert">
-          <%= alert %>
+        <div class="app-header__meta">
+          <% if user_signed_in? %>
+            <div class="app-user-badge">
+              <span class="app-user-badge__label">ログイン中</span>
+              <strong><%= current_user.name %>さん</strong>
+            </div>
+          <% end %>
+
+          <nav class="app-nav" aria-label="主要メニュー">
+            <%= link_to "ホーム", root_path, class: "app-nav__link" %>
+            <% if user_signed_in? %>
+              <%= link_to "シフト期間", shift_periods_path, class: "app-nav__link" %>
+              <%= link_to "スタッフ", employees_path, class: "app-nav__link" %>
+              <%= link_to "プロフィール", edit_user_registration_path, class: "app-nav__link" %>
+              <%= link_to "ログアウト", destroy_user_session_path, class: "app-nav__link app-nav__link--accent", data: { turbo_method: :delete } %>
+            <% else %>
+              <%= link_to "ログイン", new_user_session_path, class: "app-nav__link" %>
+              <%= link_to "新規登録", new_user_registration_path, class: "app-nav__link app-nav__link--accent" %>
+            <% end %>
+          </nav>
         </div>
-      <% end %>
-    </div>
-    <%= link_to 'スタッフ一覧', employees_path %>
+      </div>
+    </header>
 
-    <%= yield %>
+    <main class="app-main">
+      <div class="flash-wrapper">
+        <% if notice.present? %>
+          <div class="flash-message flash-notice">
+            <%= notice %>
+          </div>
+        <% end %>
+
+        <% if alert.present? %>
+          <div class="flash-message flash-alert">
+            <%= alert %>
+          </div>
+        <% end %>
+      </div>
+
+      <%= yield %>
+    </main>
   </body>
 </html>

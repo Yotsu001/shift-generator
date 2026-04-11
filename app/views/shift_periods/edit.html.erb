@@ -1,0 +1,26 @@
+<section class="page-shell page-shell--narrow">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">シフト期間</p>
+      <h1 class="page-title">シフト期間編集</h1>
+      <p class="page-subtitle">名称や期間、状態を更新できます。日付範囲を変更するとシフト表は再作成されます。</p>
+    </div>
+  </div>
+
+  <% if @shift_period.locked? %>
+    <div class="flash-message flash-notice">
+      現在の状態は「確定」です。自動生成とリセットは利用できません。
+    </div>
+  <% end %>
+
+  <section class="card">
+    <%= render "form" %>
+  </section>
+
+  <div class="page-actions">
+    <%= link_to "一覧へ戻る", shift_periods_path, class: "button button-ghost" %>
+    <%= link_to "詳細へ", shift_period_path(@shift_period), class: "button button-secondary" %>
+  </div>
+</section>
+
+

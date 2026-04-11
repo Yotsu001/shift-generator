@@ -1,7 +1,19 @@
-<h1>スタッフ編集</h1>
+<section class="page-shell page-shell--narrow">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">スタッフ</p>
+      <h1 class="page-title">スタッフ編集</h1>
+      <p class="page-subtitle">既存情報を確認しながら、必要な項目だけ落ち着いて更新できます。</p>
+    </div>
+  </div>
 
-<%= render 'form' %>
+  <section class="card">
+    <%= render 'form' %>
+  </section>
 
-<p>
-  <%= link_to 'スタッフ一覧へ戻る', employees_path %>
-</p>
+  <div class="page-actions">
+    <%= link_to 'スタッフ一覧へ戻る', employees_path, class: "button button-ghost" %>
+  </div>
+</section>
+
+

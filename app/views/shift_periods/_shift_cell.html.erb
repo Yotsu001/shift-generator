@@ -4,6 +4,7 @@
   <% edit_assignment_form_id = assignment.present? ? "edit-assignment-form-#{assignment.id}" : nil %>
   <% edit_leave_form_id = leave_request.present? ? "edit-leave-form-#{leave_request.id}" : nil %>
   <% period_locked = shift_day.shift_period.locked? %>
+  <% assignable_zones = employee.zones.active_ordered %>
 
   <% if leave_request.present? %>
     <p>
@@ -115,10 +116,10 @@
             <div class="zone-field">
               <%= f.label :zone_id, "区" %><br>
               <%= f.collection_select :zone_id,
-                  @zones.order(:position),
+                  assignable_zones,
                   :id,
                   :name,
-                  { prompt: "平日の日勤・中勤のみ選択" },
+                  { prompt: "担当可能区から選択" },
                   { class: "zone-select" } %>
             </div>
           <% end %>
@@ -178,10 +179,10 @@
             <div class="zone-field">
               <%= f.label :zone_id, "区" %><br>
               <%= f.collection_select :zone_id,
-                  @zones.order(:position),
+                  assignable_zones,
                   :id,
                   :name,
-                  { prompt: "平日の日勤・中勤のみ選択" },
+                  { prompt: "担当可能区から選択" },
                   { class: "zone-select" } %>
             </div>
           <% end %>

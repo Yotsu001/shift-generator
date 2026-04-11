@@ -14,7 +14,7 @@
   </div>
 
   <section class="card">
-    <%= render "shift_period_summary", shift_period: @shift_period %>
+    <%= render "shift_periods/shift_period_summary", shift_period: @shift_period %>
   </section>
 
   <section class="card">
@@ -45,6 +45,6 @@
       <% end %>
     </div>
 
-    <%= render "shift_table", employees: @employees, shift_days: shift_days(@shift_period) %>
+    <%= render "shift_periods/shift_table", employees: @employees, shift_days: shift_days(@shift_period) %>
   </section>
 </section>

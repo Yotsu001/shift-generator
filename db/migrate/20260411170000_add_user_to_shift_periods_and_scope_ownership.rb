@@ -12,7 +12,9 @@ class AddUserToShiftPeriodsAndScopeOwnership < ActiveRecord::Migration[7.1]
   end
 
   def up
-    add_reference :shift_periods, :user, foreign_key: true, null: true
+    unless column_exists?(:shift_periods, :user_id)
+      add_reference :shift_periods, :user, foreign_key: true, null: true
+    end
 
     backfill_shift_period_user_ids!
     ensure_employee_user_ids_present!
@@ -20,18 +22,28 @@ class AddUserToShiftPeriodsAndScopeOwnership < ActiveRecord::Migration[7.1]
     change_column_null :shift_periods, :user_id, false
     change_column_null :employees, :user_id, false
 
-    remove_index :shift_periods, column: [:start_date, :end_date]
-    add_index :shift_periods, [:user_id, :start_date, :end_date], unique: true
+    if index_exists?(:shift_periods, [:start_date, :end_date])
+      remove_index :shift_periods, column: [:start_date, :end_date]
+    end
+
+    unless index_exists?(:shift_periods, [:user_id, :start_date, :end_date], unique: true)
+      add_index :shift_periods, [:user_id, :start_date, :end_date], unique: true
+    end
   end
 
   def down
-    remove_index :shift_periods, column: [:user_id, :start_date, :end_date]
-    add_index :shift_periods, [:start_date, :end_date], unique: true
+    if index_exists?(:shift_periods, [:user_id, :start_date, :end_date])
+      remove_index :shift_periods, column: [:user_id, :start_date, :end_date]
+    end
 
-    change_column_null :employees, :user_id, true
-    change_column_null :shift_periods, :user_id, true
+    unless index_exists?(:shift_periods, [:start_date, :end_date], unique: true)
+      add_index :shift_periods, [:start_date, :end_date], unique: true
+    end
 
-    remove_reference :shift_periods, :user, foreign_key: true
+    change_column_null :employees, :user_id, true if column_exists?(:employees, :user_id)
+    change_column_null :shift_periods, :user_id, true if column_exists?(:shift_periods, :user_id)
+
+    remove_reference :shift_periods, :user, foreign_key: true if column_exists?(:shift_periods, :user_id)
   end
 
   private

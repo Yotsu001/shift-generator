@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_04_11_094000) do
+ActiveRecord::Schema[7.1].define(version: 2026_04_11_170000) do
   create_table "employee_zones", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "employee_id", null: false
     t.bigint "zone_id", null: false
@@ -27,7 +27,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_11_094000) do
     t.integer "display_order", default: 0, null: false
     t.boolean "mixed_zone_enabled", default: false, null: false
     t.boolean "weekend_work_enabled", default: true, null: false
-    t.bigint "user_id"
+    t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "mixed_zone_preferred", default: false, null: false
@@ -83,7 +83,9 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_11_094000) do
     t.integer "status", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["start_date", "end_date"], name: "index_shift_periods_on_start_date_and_end_date", unique: true
+    t.bigint "user_id", null: false
+    t.index ["user_id", "start_date", "end_date"], name: "index_shift_periods_on_user_id_and_start_date_and_end_date", unique: true
+    t.index ["user_id"], name: "index_shift_periods_on_user_id"
   end
 
   create_table "users", charset: "utf8mb3", force: :cascade do |t|
@@ -122,4 +124,5 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_11_094000) do
   add_foreign_key "shift_assignments", "users"
   add_foreign_key "shift_assignments", "zones"
   add_foreign_key "shift_days", "shift_periods"
+  add_foreign_key "shift_periods", "users"
 end

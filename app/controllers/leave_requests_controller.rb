@@ -33,7 +33,9 @@ class LeaveRequestsController < ApplicationController
   private
 
   def set_shift_day
-    @shift_day = ShiftDay.find(params[:shift_day_id])
+    @shift_day = ShiftDay.joins(:shift_period)
+                         .merge(current_user.shift_periods)
+                         .find(params[:shift_day_id])
   end
 
   def set_leave_request
@@ -46,7 +48,7 @@ class LeaveRequestsController < ApplicationController
 
   def prepare_shift_period_show_data
     @shift_period = @shift_day.shift_period
-    @employees = Employee.active_ordered
+    @employees = current_user.employees.active_ordered
     @shift_days = @shift_period.shift_days.order(:target_date)
     @shift_assignments = @shift_period.shift_assignments.includes(:employee, :zone, :shift_day)
     @leave_requests = @shift_period.leave_requests.includes(:employee, :shift_day)

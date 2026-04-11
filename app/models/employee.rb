@@ -1,5 +1,5 @@
 class Employee < ApplicationRecord
-  belongs_to :user, optional: true
+  belongs_to :user
   belongs_to :primary_zone, class_name: 'Zone', optional: true
 
   has_many :employee_zones, dependent: :destroy

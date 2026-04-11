@@ -21,6 +21,7 @@ class ShiftAssignment < ApplicationRecord
   validate :only_one_mixed_zone_per_day
   validate :weekend_work_type_limit
   validate :cannot_assign_if_leave_requested
+  validate :employee_must_belong_to_shift_period_owner
 
   delegate :name, to: :employee, prefix: true, allow_nil: true
 
@@ -88,6 +89,14 @@ class ShiftAssignment < ApplicationRecord
     if LeaveRequest.exists?(employee_id: employee_id, shift_day_id: shift_day_id)
       errors.add(:base, "希望休が登録されているため勤務を割り当てできません")
     end
+  end
+
+  def employee_must_belong_to_shift_period_owner
+    return if employee.blank? || shift_day.blank?
+    return if shift_day.shift_period.blank?
+    return if employee.user_id == shift_day.shift_period.user_id
+
+    errors.add(:employee, "はこのシフト期間の作成者に属するスタッフを選択してください")
   end
 
   def weekend_or_holiday?

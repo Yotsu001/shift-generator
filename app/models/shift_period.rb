@@ -1,4 +1,6 @@
 class ShiftPeriod < ApplicationRecord
+  belongs_to :user
+
   has_many :shift_days, dependent: :destroy
   has_many :shift_assignments, through: :shift_days
   has_many :leave_requests, through: :shift_days
@@ -8,6 +10,7 @@ class ShiftPeriod < ApplicationRecord
   validates :name, presence: true
   validates :start_date, presence: true
   validates :end_date, presence: true
+  validates :start_date, uniqueness: { scope: [:user_id, :end_date] }
   validate :end_date_after_start_date
 
   after_create :generate_shift_days

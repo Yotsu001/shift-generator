@@ -16,8 +16,13 @@
 </p>
 
 <p>
-  <strong>担当可能通常区:</strong>
+  <strong>担当可能区:</strong>
   <%= @employee.zones.order(:position).pluck(:name).join('、').presence || '未設定' %>
+</p>
+
+<p>
+  <strong>土日祝出勤不可:</strong>
+  <%= @employee.weekend_work_disabled ? 'する' : 'しない' %>
 </p>
 
 <% if @employee.has_attribute?(:mixed_zone_preferred) %>

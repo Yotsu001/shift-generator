@@ -110,7 +110,9 @@ module ShiftGeneration
 
     def weekend_candidate_employees_for(shift_day)
       employees.reject do |employee|
-        shift_day.leave_request_for(employee).present? || shift_day.assignment_for(employee).present?
+        !employee.weekend_work_enabled ||
+          shift_day.leave_request_for(employee).present? ||
+          shift_day.assignment_for(employee).present?
       end
     end
 
@@ -387,30 +389,22 @@ module ShiftGeneration
     end
 
     def selectable_zone_for(employee, shift_day)
-      regular_zones = regular_zones_for_assignment
-      return regular_zones.first if employee.blank?
+      return nil if employee.blank?
 
-      zone_counts = regular_zone_assignment_counts_for(shift_day)
-      minimum_count = regular_zones.map { |zone| zone_counts[zone.id] || 0 }.min
-
-      candidate_zones = regular_zones.select do |zone|
-        (zone_counts[zone.id] || 0) == minimum_count
-      end
+      assignable_zones = assignable_regular_zones_for(employee)
+      return nil if assignable_zones.blank?
 
       primary_zone = employee.primary_zone
-      if primary_zone.present? && primary_zone.name != "混合" && candidate_zones.any? { |zone| zone.id == primary_zone.id }
-        return primary_zone
+      return primary_zone if primary_zone.present? && assignable_zones.any? { |zone| zone.id == primary_zone.id }
+
+      zone_counts = regular_zone_assignment_counts_for(shift_day)
+      assignable_zones.min_by do |zone|
+        [zone_counts[zone.id] || 0, zone.position, zone.id]
       end
-
-      candidate_zones.first || fallback_regular_zone
     end
 
-    def fallback_regular_zone
-      regular_zones_for_assignment.first
-    end
-
-    def regular_zones_for_assignment
-      @regular_zones_for_assignment ||= Zone.where.not(name: "混合").order(:position, :id).to_a
+    def assignable_regular_zones_for(employee)
+      employee.zones.where.not(name: "混合").order(:position, :id).to_a
     end
 
     def regular_zone_assignment_counts_for(shift_day)

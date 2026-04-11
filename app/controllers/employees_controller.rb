@@ -45,6 +45,6 @@ class EmployeesController < ApplicationController
   end
 
   def employee_params
-    params.require(:employee).permit(:name, :mixed_zone_preferred, :primary_zone_id, zone_ids: [])
+    params.require(:employee).permit(:name, :mixed_zone_preferred, :primary_zone_id, :weekend_work_disabled, zone_ids: [])
   end
 end

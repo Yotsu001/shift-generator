@@ -11,7 +11,7 @@
   </p>
 
   <p>
-    <strong>担当可能通常区:</strong>
+    <strong>担当可能区:</strong>
     <%= current_user.employee&.zones&.order(:position)&.pluck(:name)&.join("、").presence || "未設定" %>
   </p>
 

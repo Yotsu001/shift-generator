@@ -12,6 +12,24 @@ class Employee < ApplicationRecord
   validates :active, inclusion: { in: [true, false] }
   validates :mixed_zone_enabled, inclusion: { in: [true, false] }
   validates :weekend_work_enabled, inclusion: { in: [true, false] }
+  validate :primary_zone_must_be_in_assignable_zones
 
   scope :active_ordered, -> { where(active: true).order(:display_order, :id) }
+
+  def weekend_work_disabled
+    !weekend_work_enabled
+  end
+
+  def weekend_work_disabled=(value)
+    self.weekend_work_enabled = !ActiveModel::Type::Boolean.new.cast(value)
+  end
+
+  private
+
+  def primary_zone_must_be_in_assignable_zones
+    return if primary_zone_id.blank?
+    return if zones.loaded? ? zones.any? { |zone| zone.id == primary_zone_id } : zones.exists?(primary_zone_id)
+
+    errors.add(:primary_zone_id, 'は担当可能区の中から選択してください')
+  end
 end

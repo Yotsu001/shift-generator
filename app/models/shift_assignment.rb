@@ -47,7 +47,7 @@ class ShiftAssignment < ApplicationRecord
     return unless employee.respond_to?(:zones)
     return if employee.zones.include?(zone)
 
-    errors.add(:zone, "はこの従業員の担当可能通常区ではありません")
+    errors.add(:zone, "はこの従業員の担当可能区ではありません")
   end
 
   def only_one_mixed_zone_per_day

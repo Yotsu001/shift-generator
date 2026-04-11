@@ -59,6 +59,5 @@ ja:
 
     shift_period:
       status:
-        draft: 下書き
-        published: 公開
-        locked: ロック
+        draft: 案
+        locked: 確定

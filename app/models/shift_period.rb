@@ -3,7 +3,7 @@ class ShiftPeriod < ApplicationRecord
   has_many :shift_assignments, through: :shift_days
   has_many :leave_requests, through: :shift_days
 
-  enum status: { draft: 0, published: 1, locked: 2 }
+  enum status: { draft: 0, locked: 1 }
 
   validates :name, presence: true
   validates :start_date, presence: true
@@ -11,6 +11,11 @@ class ShiftPeriod < ApplicationRecord
   validate :end_date_after_start_date
 
   after_create :generate_shift_days
+
+  def rebuild_shift_days!
+    shift_days.destroy_all
+    generate_shift_days
+  end
 
   private
 

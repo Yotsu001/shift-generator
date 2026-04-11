@@ -1,6 +1,7 @@
 class ShiftPeriodsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_shift_period, only: [:show, :generate, :clear_assignments]
+  before_action :set_shift_period, only: [:show, :edit, :update, :destroy, :generate, :clear_assignments]
+  before_action :prevent_locked_shift_period_actions, only: [:generate, :clear_assignments]
 
   def index
     @shift_periods = ShiftPeriod.order(start_date: :desc)
@@ -17,6 +18,36 @@ class ShiftPeriodsController < ApplicationController
     else
       render :new, status: :unprocessable_entity
     end
+  end
+
+  def edit; end
+
+  def update
+    date_range_changed = shift_period_date_range_changed?
+
+    ShiftPeriod.transaction do
+      if @shift_period.update(shift_period_params)
+        @shift_period.rebuild_shift_days! if date_range_changed
+      else
+        raise ActiveRecord::Rollback
+      end
+    end
+
+    if @shift_period.errors.any?
+      render :edit, status: :unprocessable_entity
+    else
+      notice = if date_range_changed
+                 "シフト期間を更新しました。日付範囲の変更に伴い、シフト表を再作成しました"
+               else
+                 "シフト期間を更新しました"
+               end
+      redirect_to shift_periods_path, notice: notice
+    end
+  end
+
+  def destroy
+    @shift_period.destroy!
+    redirect_to shift_periods_path, notice: "シフト期間を削除しました"
   end
 
   def show
@@ -47,6 +78,24 @@ class ShiftPeriodsController < ApplicationController
 
   def shift_period_params
     params.require(:shift_period).permit(:name, :start_date, :end_date, :status)
+  end
+
+  def shift_period_date_range_changed?
+    @shift_period.start_date != parsed_shift_period_date(:start_date) ||
+      @shift_period.end_date != parsed_shift_period_date(:end_date)
+  end
+
+  def parsed_shift_period_date(key)
+    value = params.dig(:shift_period, key)
+    value.present? ? Date.parse(value) : nil
+  rescue ArgumentError
+    nil
+  end
+
+  def prevent_locked_shift_period_actions
+    return unless @shift_period.locked?
+
+    redirect_to shift_period_path(@shift_period), alert: "確定済みのシフト期間ではこの操作を実行できません"
   end
 
   def prepare_show_resources

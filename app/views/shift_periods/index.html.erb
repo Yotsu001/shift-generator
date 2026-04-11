@@ -29,8 +29,12 @@
               <td><strong><%= shift_period.name %></strong></td>
               <td><%= shift_period.start_date %></td>
               <td><%= shift_period.end_date %></td>
-              <td><span class="status-pill"><%= shift_period.status %></span></td>
-              <td><%= link_to "詳細", shift_period_path(shift_period), class: "text-link" %></td>
+              <td><span class="status-pill"><%= shift_period_status_label(shift_period) %></span></td>
+              <td class="table-actions">
+                <%= link_to "詳細", shift_period_path(shift_period), class: "text-link" %>
+                <%= link_to "編集", edit_shift_period_path(shift_period), class: "text-link" %>
+                <%= link_to "削除", shift_period_path(shift_period), class: "text-link text-link-danger", data: { turbo_method: :delete, turbo_confirm: "このシフト期間を削除しますか？" } %>
+              </td>
             </tr>
           <% end %>
         </tbody>

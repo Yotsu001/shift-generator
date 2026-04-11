@@ -18,18 +18,27 @@
           <p class="app-brand__tagline">安心して扱える、やわらかなシフト管理</p>
         </div>
 
-        <nav class="app-nav" aria-label="主要メニュー">
-          <%= link_to "ホーム", root_path, class: "app-nav__link" %>
+        <div class="app-header__meta">
           <% if user_signed_in? %>
-            <%= link_to "シフト期間", shift_periods_path, class: "app-nav__link" %>
-            <%= link_to "スタッフ", employees_path, class: "app-nav__link" %>
-            <%= link_to "プロフィール", edit_user_registration_path, class: "app-nav__link" %>
-            <%= link_to "ログアウト", destroy_user_session_path, class: "app-nav__link app-nav__link--accent", data: { turbo_method: :delete } %>
-          <% else %>
-            <%= link_to "ログイン", new_user_session_path, class: "app-nav__link" %>
-            <%= link_to "新規登録", new_user_registration_path, class: "app-nav__link app-nav__link--accent" %>
+            <div class="app-user-badge">
+              <span class="app-user-badge__label">ログイン中</span>
+              <strong><%= current_user.name %>さん</strong>
+            </div>
           <% end %>
-        </nav>
+
+          <nav class="app-nav" aria-label="主要メニュー">
+            <%= link_to "ホーム", root_path, class: "app-nav__link" %>
+            <% if user_signed_in? %>
+              <%= link_to "シフト期間", shift_periods_path, class: "app-nav__link" %>
+              <%= link_to "スタッフ", employees_path, class: "app-nav__link" %>
+              <%= link_to "プロフィール", edit_user_registration_path, class: "app-nav__link" %>
+              <%= link_to "ログアウト", destroy_user_session_path, class: "app-nav__link app-nav__link--accent", data: { turbo_method: :delete } %>
+            <% else %>
+              <%= link_to "ログイン", new_user_session_path, class: "app-nav__link" %>
+              <%= link_to "新規登録", new_user_registration_path, class: "app-nav__link app-nav__link--accent" %>
+            <% end %>
+          </nav>
+        </div>
       </div>
     </header>
 

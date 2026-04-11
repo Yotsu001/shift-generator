@@ -1,0 +1,32 @@
+<%= form_with model: @zone, local: true, html: { class: "employee-form" } do |form| %>
+  <% if @zone.errors.any? %>
+    <div class="error-messages">
+      <h2><%= @zone.errors.count %>件のエラーがあります</h2>
+      <ul>
+        <% @zone.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= form.label :name, "区名" %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :position, "表示順" %>
+    <%= form.number_field :position, min: 0 %>
+    <p class="form-hint">数字が小さいほど先頭に表示されます。</p>
+  </div>
+
+  <div class="form-group form-group--inline">
+    <%= form.label :active, "利用中にする" %>
+    <%= form.check_box :active %>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit %>
+  </div>
+<% end %>

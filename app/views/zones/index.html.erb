@@ -1,0 +1,42 @@
+<section class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">区</p>
+      <h1 class="page-title">区一覧</h1>
+      <p class="page-subtitle">表示順や利用状態をまとめて確認しながら、必要な区を落ち着いて管理できます。</p>
+    </div>
+    <div class="page-actions">
+      <%= link_to "区を新規登録", new_zone_path, class: "button button-primary" %>
+      <%= link_to "トップページへ戻る", root_path, class: "button button-ghost" %>
+    </div>
+  </div>
+
+  <section class="card">
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>区名</th>
+            <th>表示順</th>
+            <th>利用状態</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @zones.each do |zone| %>
+            <tr>
+              <td><%= zone.id %></td>
+              <td><strong><%= zone.name %></strong></td>
+              <td><%= zone.position %></td>
+              <td><%= zone.active ? "利用中" : "停止中" %></td>
+              <td class="table-actions">
+                <%= link_to "編集", edit_zone_path(zone), class: "text-link" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>

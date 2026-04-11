@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   root "homes#index"
 
   resources :employees
+  resources :zones, only: %i[index new create edit update]
 
   resources :shift_periods do
     member do

@@ -10,6 +10,10 @@
   </div>
 
   <% if user_signed_in? %>
+    <% employees = current_user.employees.includes(:zones).to_a %>
+    <% employee_count = employees.count %>
+    <% zone_names = employees.flat_map(&:zones).uniq(&:id).sort_by { |zone| [zone.position, zone.id] }.map(&:name) %>
+
     <div class="dashboard-grid">
       <section class="card">
         <h2 class="section-title">ログイン情報</h2>
@@ -23,12 +27,8 @@
             <dd><%= current_user.email %></dd>
           </div>
           <div>
-            <dt>主担当区</dt>
-            <dd><%= current_user.employee&.primary_zone&.name || "未設定" %></dd>
-          </div>
-          <div>
-            <dt>担当可能区</dt>
-            <dd><%= current_user.employee&.zones&.order(:position)&.pluck(:name)&.join("、").presence || "未設定" %></dd>
+            <dt>登録スタッフ数</dt>
+            <dd><%= employee_count %>人</dd>
           </div>
         </dl>
       </section>
@@ -55,5 +55,3 @@
     </section>
   <% end %>
 </section>
-
-

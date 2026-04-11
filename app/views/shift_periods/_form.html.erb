@@ -26,10 +26,18 @@
     </div>
   </div>
 
-  <div class="form-group">
-    <%= f.label :status, "状態" %>
-    <%= f.select :status, shift_period_status_options %>
-  </div>
+  <% if @shift_period.persisted? %>
+    <div class="form-group">
+      <%= f.label :status, "状態" %>
+      <%= f.select :status, shift_period_status_options %>
+    </div>
+  <% else %>
+    <div class="form-group">
+      <label>状態</label>
+      <input type="text" value="案" disabled>
+      <p class="form-hint">作成時は自動的に「案」で登録されます。確定への変更は作成後に編集画面で行えます。</p>
+    </div>
+  <% end %>
 
   <div class="form-actions">
     <%= f.submit @shift_period.persisted? ? "更新する" : "作成する" %>

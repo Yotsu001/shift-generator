@@ -1,21 +1,43 @@
+.shift-table-wrapper {
+  max-height: min(74vh, 920px);
+  overflow: auto;
+  position: relative;
+  border: 1px solid rgba(199, 186, 167, 0.6);
+  border-radius: 18px;
+  background: var(--surface-strong);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
 .shift-table {
   border-collapse: separate;
   border-spacing: 0;
   width: max-content;
   min-width: 100%;
-  font-size: 13px;
+  font-size: 12px;
+  line-height: 1.4;
 }
 
 .shift-table th,
 .shift-table td {
   border-right: 1px solid rgba(221, 211, 196, 0.85);
   border-bottom: 1px solid rgba(221, 211, 196, 0.85);
-  padding: 12px;
+  padding: 8px 9px;
   background-clip: padding-box;
 }
 
+.shift-table thead th {
+  border-top: none;
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+
+.shift-staff-header,
+.shift-staff-name {
+  min-width: 120px;
+}
+
 .shift-cell {
-  min-width: 180px;
+  min-width: 138px;
   vertical-align: top;
   background-color: rgba(255, 253, 249, 0.9);
 }
@@ -25,17 +47,20 @@
   top: 0;
   z-index: 20;
   background-color: #f8f4ee;
+  box-shadow: 0 1px 0 rgba(199, 186, 167, 0.8);
 }
 
 .shift-sticky-left {
   position: sticky;
   left: 0;
-  z-index: 10;
+  z-index: 15;
   background-color: #fffaf4;
+  box-shadow: 1px 0 0 rgba(199, 186, 167, 0.8);
 }
 
 .shift-corner-cell {
   z-index: 30;
+  box-shadow: 1px 0 0 rgba(199, 186, 167, 0.8), 0 1px 0 rgba(199, 186, 167, 0.8);
 }
 
 .shift-staff-header,
@@ -45,17 +70,27 @@
   font-weight: 700;
 }
 
+.shift-staff-name {
+  font-size: 12px;
+}
+
+.shift-day-header {
+  min-width: 82px;
+  font-size: 11px;
+  line-height: 1.3;
+}
+
 .shift-cell p {
-  margin: 0 0 8px;
+  margin: 0 0 5px;
 }
 
 .shift-badge {
   display: inline-block;
-  padding: 4px 10px;
+  padding: 2px 8px;
   border-radius: 9999px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  line-height: 1.4;
+  line-height: 1.35;
 }
 
 .shift-badge-day {
@@ -84,8 +119,8 @@
 }
 
 .shift-zone-name {
-  margin-top: 6px;
-  font-size: 13px;
+  margin-top: 4px;
+  font-size: 11px;
   color: var(--text-soft);
 }
 
@@ -100,10 +135,11 @@
 .action-button {
   border: 1px solid transparent;
   border-radius: 999px;
-  padding: 8px 12px;
-  font-size: 12px;
+  padding: 5px 9px;
+  font-size: 11px;
   font-weight: 700;
   cursor: pointer;
+  line-height: 1.2;
 }
 
 .action-button-primary {
@@ -124,31 +160,52 @@
 .action-button-danger {
   background-color: var(--danger-soft);
   color: var(--danger);
+  padding: 3px 7px;
+  font-size: 10px;
+  line-height: 1.1;
+  border-radius: 999px;
 }
 
 .cell-action-buttons {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .compact-form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 12px;
-  padding: 14px;
-  border-radius: 16px;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 10px;
+  border-radius: 12px;
   background: rgba(255, 251, 245, 0.92);
   border: 1px solid rgba(221, 211, 196, 0.72);
 }
 
+.compact-form label {
+  font-size: 11px;
+}
+
+.compact-form input[type="text"],
+.compact-form select {
+  min-height: 34px;
+  padding: 6px 8px;
+  font-size: 11px;
+}
+
+.compact-form input[type="submit"] {
+  min-height: 34px;
+  padding: 7px 10px;
+  font-size: 11px;
+}
+
 .compact-form__actions {
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .toggle-form {
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .toggle-button {
@@ -189,4 +246,23 @@
 
 .sunday-header {
   background-color: #f4e8e4;
+}
+
+@media (max-width: 840px) {
+  .shift-table-wrapper {
+    max-height: 70vh;
+  }
+
+  .shift-staff-header,
+  .shift-staff-name {
+    min-width: 108px;
+  }
+
+  .shift-day-header {
+    min-width: 74px;
+  }
+
+  .shift-cell {
+    min-width: 126px;
+  }
 }

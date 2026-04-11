@@ -27,6 +27,7 @@
   </div>
 
   <div class="form-actions">
-    <%= form.submit %>
+    <%= form.submit @zone.persisted? ? '更新する' : '登録する' %>
   </div>
 <% end %>
+

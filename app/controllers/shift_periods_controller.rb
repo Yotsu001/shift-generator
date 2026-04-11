@@ -4,15 +4,17 @@ class ShiftPeriodsController < ApplicationController
   before_action :prevent_locked_shift_period_actions, only: [:generate, :clear_assignments]
 
   def index
-    @shift_periods = ShiftPeriod.order(start_date: :desc)
+    @shift_periods = current_user.shift_periods.order(start_date: :desc)
   end
 
   def new
-    @shift_period = ShiftPeriod.new
+    @shift_period = current_user.shift_periods.new(status: :draft)
   end
 
   def create
-    @shift_period = ShiftPeriod.new(shift_period_params)
+    @shift_period = current_user.shift_periods.new(shift_period_create_params)
+    @shift_period.status = :draft
+
     if @shift_period.save
       redirect_to @shift_period, notice: "シフト期間を作成しました"
     else
@@ -26,7 +28,7 @@ class ShiftPeriodsController < ApplicationController
     date_range_changed = shift_period_date_range_changed?
 
     ShiftPeriod.transaction do
-      if @shift_period.update(shift_period_params)
+      if @shift_period.update(shift_period_update_params)
         @shift_period.rebuild_shift_days! if date_range_changed
       else
         raise ActiveRecord::Rollback
@@ -73,10 +75,14 @@ class ShiftPeriodsController < ApplicationController
   private
 
   def set_shift_period
-    @shift_period = ShiftPeriod.includes(shift_days: [:shift_assignments, :leave_requests]).find(params[:id])
+    @shift_period = current_user.shift_periods.includes(shift_days: [:shift_assignments, :leave_requests]).find(params[:id])
   end
 
-  def shift_period_params
+  def shift_period_create_params
+    params.require(:shift_period).permit(:name, :start_date, :end_date)
+  end
+
+  def shift_period_update_params
     params.require(:shift_period).permit(:name, :start_date, :end_date, :status)
   end
 
@@ -99,7 +105,7 @@ class ShiftPeriodsController < ApplicationController
   end
 
   def prepare_show_resources
-    @employees = Employee.active_ordered
+    @employees = current_user.employees.active_ordered
     @shift_days = @shift_period.shift_days.order(:target_date)
     @shift_assignments = @shift_period.shift_assignments.includes(:employee, :zone, :shift_day)
     @leave_requests = @shift_period.leave_requests.includes(:employee, :shift_day)

@@ -1,19 +1,20 @@
 class EmployeesController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_employee, only: %i[show edit update destroy]
 
   def index
-    @employees = Employee.includes(:primary_zone, :zones).order(:id)
+    @employees = current_user.employees.includes(:primary_zone, :zones).order(:display_order, :id)
   end
 
   def show
   end
 
   def new
-    @employee = Employee.new
+    @employee = current_user.employees.new
   end
 
   def create
-    @employee = Employee.new(employee_params)
+    @employee = current_user.employees.new(employee_params)
 
     if @employee.save
       redirect_to employees_path, notice: 'スタッフを登録しました。'
@@ -41,7 +42,7 @@ class EmployeesController < ApplicationController
   private
 
   def set_employee
-    @employee = Employee.find(params[:id])
+    @employee = current_user.employees.find(params[:id])
   end
 
   def employee_params

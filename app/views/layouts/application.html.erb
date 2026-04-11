@@ -31,6 +31,7 @@
             <% if user_signed_in? %>
               <%= link_to "シフト期間", shift_periods_path, class: "app-nav__link" %>
               <%= link_to "スタッフ", employees_path, class: "app-nav__link" %>
+              <%= link_to "区", zones_path, class: "app-nav__link" %>
               <%= link_to "プロフィール", edit_user_registration_path, class: "app-nav__link" %>
               <%= link_to "ログアウト", destroy_user_session_path, class: "app-nav__link app-nav__link--accent", data: { turbo_method: :delete } %>
             <% else %>
@@ -61,3 +62,4 @@
     </main>
   </body>
 </html>
+

@@ -46,6 +46,7 @@
   <% end %>
 
   <div class="form-actions">
-    <%= form.submit %>
+    <%= form.submit @employee.persisted? ? '更新する' : '登録する' %>
   </div>
 <% end %>
+

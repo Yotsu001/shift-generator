@@ -8,7 +8,7 @@ module ShiftAssignmentsHelper
   end
 
   def status_label(status)
-    I18n.t("enums.shift_period.status.#{status}", default: status)
+    shift_period_status_label(status)
   end
 
   def work_type_options

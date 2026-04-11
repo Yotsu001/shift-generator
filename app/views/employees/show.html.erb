@@ -11,18 +11,18 @@
 </p>
 
 <p>
-  <strong>担当可能区:</strong>
-  <%= @employee.zones.order(:position).pluck(:name).join('、').presence || '未設定' %>
+  <strong>主担当区:</strong>
+  <%= @employee.primary_zone&.name || '未設定' %>
 </p>
 
 <p>
-  <strong>担当区:</strong>
-  <%= @employee.primary_zone&.name || '未設定' %>
+  <strong>担当可能通常区:</strong>
+  <%= @employee.zones.order(:position).pluck(:name).join('、').presence || '未設定' %>
 </p>
 
 <% if @employee.has_attribute?(:mixed_zone_preferred) %>
   <p>
-    <strong>混合区候補:</strong>
+    <strong>混合区担当候補:</strong>
     <%= @employee.mixed_zone_preferred ? 'する' : 'しない' %>
   </p>
 <% end %>

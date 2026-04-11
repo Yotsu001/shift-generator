@@ -7,4 +7,5 @@ class Zone < ApplicationRecord
   validates :position, presence: true
 
   scope :active_ordered, -> { where(active: true).order(:position, :id) }
+  scope :regular_ordered, -> { active_ordered.where.not(name: '混合') }
 end

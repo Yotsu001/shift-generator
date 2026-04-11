@@ -9,9 +9,9 @@
     <tr>
       <th>ID</th>
       <th>スタッフ名</th>
-      <th>担当可能区</th>
-      <th>担当区</th>
-      <th>混合区候補</th>
+      <th>主担当区</th>
+      <th>担当可能通常区</th>
+      <th>混合区担当候補</th>
       <th></th>
       <th></th>
       <th></th>
@@ -22,8 +22,8 @@
       <tr>
         <td><%= employee.id %></td>
         <td><%= employee.name %></td>
-        <td><%= employee.zones.order(:position).pluck(:name).join('、').presence || '未設定' %></td>
         <td><%= employee.primary_zone&.name || '未設定' %></td>
+        <td><%= employee.zones.order(:position).pluck(:name).join('、').presence || '未設定' %></td>
         <td><%= employee.mixed_zone_preferred ? '○' : '-' %></td>
         <td><%= link_to '詳細', employee_path(employee) %></td>
         <td><%= link_to '編集', edit_employee_path(employee) %></td>

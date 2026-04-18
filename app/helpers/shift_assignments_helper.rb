@@ -21,6 +21,8 @@ module ShiftAssignmentsHelper
     case work_type
     when "day_shift"
       "shift-badge shift-badge-day"
+    when "middle_shift"
+      "shift-badge shift-badge-middle"
     when "night_shift"
       "shift-badge shift-badge-night"
     when "off_duty"

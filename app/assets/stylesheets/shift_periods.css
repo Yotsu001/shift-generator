@@ -98,6 +98,11 @@
   color: #365d55;
 }
 
+.shift-badge-middle {
+  background-color: #dfe9ef;
+  color: #78654d;
+}
+
 .shift-badge-night {
   background-color: #dfe0ef;
   color: #4d5078;

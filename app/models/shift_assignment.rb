@@ -16,6 +16,8 @@ class ShiftAssignment < ApplicationRecord
   validates :employee, presence: true
   validates :work_type, presence: true
 
+  before_validation :clear_zone_when_not_allowed
+
   validate :zone_presence_by_work_type
   validate :zone_must_be_assignable_for_employee
   validate :one_middle_shift_per_weekday
@@ -26,6 +28,17 @@ class ShiftAssignment < ApplicationRecord
   delegate :name, to: :employee, prefix: true, allow_nil: true
 
   private
+
+  def clear_zone_when_not_allowed
+    self.zone = nil unless zone_allowed?
+  end
+
+  def zone_allowed?
+    return false if work_type.blank?
+    return false if weekend_or_holiday?
+
+    day_shift? || middle_shift? || night_shift?
+  end
 
   def zone_presence_by_work_type
     return if work_type.blank?

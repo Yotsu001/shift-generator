@@ -5,10 +5,11 @@
     <% assignment = find_shift_assignment(shift_day, employee) %>
     <% leave_request = find_leave_request(shift_day, employee) %>
 
-    <%= render "shift_cell",
+    <%= render "shift_periods/shift_cell",
           shift_day: shift_day,
           employee: employee,
           assignment: assignment,
           leave_request: leave_request %>
   <% end %>
 </tr>
+

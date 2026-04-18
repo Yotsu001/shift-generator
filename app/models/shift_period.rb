@@ -15,9 +15,38 @@ class ShiftPeriod < ApplicationRecord
 
   after_create :generate_shift_days
 
+  def self.detect_day_type_for(date)
+    case date.wday
+    when 0
+      :sunday
+    when 6
+      :saturday
+    else
+      national_holiday?(date) ? :holiday : :weekday
+    end
+  end
+
+  def self.national_holiday?(date)
+    defined?(HolidayJp) && HolidayJp.holiday?(date)
+  end
+
   def rebuild_shift_days!
     shift_days.destroy_all
     generate_shift_days
+  end
+
+  def refresh_day_types!
+    updated_count = 0
+
+    shift_days.find_each do |shift_day|
+      expected_day_type = self.class.detect_day_type_for(shift_day.target_date)
+      next if shift_day.day_type == expected_day_type.to_s
+
+      shift_day.update!(day_type: expected_day_type)
+      updated_count += 1
+    end
+
+    updated_count
   end
 
   private
@@ -39,13 +68,6 @@ class ShiftPeriod < ApplicationRecord
   end
 
   def detect_day_type(date)
-    case date.wday
-    when 0
-      :sunday
-    when 6
-      :saturday
-    else
-      :weekday
-    end
+    self.class.detect_day_type_for(date)
   end
 end

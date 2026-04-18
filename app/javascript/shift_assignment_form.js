@@ -1,7 +1,7 @@
 function updateZoneField(workTypeSelect, zoneField, zoneSelect) {
   const value = workTypeSelect.value;
 
-  if (value === "day_shift" || value === "night_shift") {
+  if (value === "day_shift" || value === "middle_shift" || value === "night_shift") {
     zoneField.style.display = "block";
   } else {
     zoneField.style.display = "none";

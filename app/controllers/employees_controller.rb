@@ -19,7 +19,7 @@ class EmployeesController < ApplicationController
     if @employee.save
       redirect_to employees_path, notice: 'スタッフを登録しました。'
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
@@ -30,7 +30,7 @@ class EmployeesController < ApplicationController
     if @employee.update(employee_params)
       redirect_to employees_path, notice: 'スタッフ情報を更新しました。'
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 

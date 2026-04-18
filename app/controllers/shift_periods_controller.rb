@@ -18,7 +18,7 @@ class ShiftPeriodsController < ApplicationController
     if @shift_period.save
       redirect_to @shift_period, notice: "シフト期間を作成しました"
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
@@ -36,7 +36,7 @@ class ShiftPeriodsController < ApplicationController
     end
 
     if @shift_period.errors.any?
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     else
       notice = if date_range_changed
                  "シフト期間を更新しました。日付範囲の変更に伴い、シフト表を再作成しました"

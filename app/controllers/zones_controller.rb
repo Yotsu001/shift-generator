@@ -16,7 +16,7 @@ class ZonesController < ApplicationController
     if @zone.save
       redirect_to zones_path, notice: "区を登録しました。"
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
@@ -27,7 +27,7 @@ class ZonesController < ApplicationController
     if @zone.update(zone_params)
       redirect_to zones_path, notice: "区情報を更新しました。"
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 

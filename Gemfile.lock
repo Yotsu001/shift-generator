@@ -119,6 +119,7 @@ GEM
     erubi (1.13.1)
     globalid (1.3.0)
       activesupport (>= 6.1)
+    holiday_jp (0.8.1)
     i18n (1.14.8)
       concurrent-ruby (~> 1.0)
     importmap-rails (2.2.3)
@@ -305,6 +306,7 @@ DEPENDENCIES
   capybara
   debug
   devise
+  holiday_jp
   importmap-rails
   jbuilder
   mysql2 (~> 0.5)

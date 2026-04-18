@@ -123,6 +123,8 @@ module ShiftGeneration
         "saturday_off"
       elsif shift_day.sunday?
         "sunday_off"
+      elsif shift_day.holiday?
+        "national_holiday"
       end
     end
 
@@ -205,7 +207,8 @@ module ShiftGeneration
     # -------------------------
     def assign_weekend_compensatory_days!
       assign_compensatory_sunday_off_for_sunday_work! +
-        assign_compensatory_saturday_off_for_saturday_work!
+        assign_compensatory_saturday_off_for_saturday_work! +
+        assign_compensatory_national_holiday_for_holiday_work!
     end
 
     def assign_compensatory_saturday_off_for_saturday_work!
@@ -252,12 +255,38 @@ module ShiftGeneration
       created_count
     end
 
+    def assign_compensatory_national_holiday_for_holiday_work!
+      created_count = 0
+
+      holiday_shift_days.each do |shift_day|
+        working_employees_on(shift_day).each do |employee|
+          target_day = find_weekday_for_compensation(
+            weekend_shift_day: shift_day,
+            employee: employee,
+            reverse: false,
+            work_type: "national_holiday"
+          )
+
+          next if target_day.blank?
+
+          assign_rest_day(target_day, employee, "national_holiday")
+          created_count += 1
+        end
+      end
+
+      created_count
+    end
+
     def saturday_shift_days
       shift_days.select(&:saturday?)
     end
 
     def sunday_shift_days
       shift_days.select(&:sunday?)
+    end
+
+    def holiday_shift_days
+      shift_days.select(&:holiday?)
     end
 
     def working_employees_on(shift_day)
@@ -331,6 +360,15 @@ module ShiftGeneration
             !weekend_or_holiday?(day) &&
             !day.target_date.monday?
         end
+      when "national_holiday"
+        week_start = weekend_shift_day.target_date.beginning_of_week(:monday)
+        week_end   = weekend_shift_day.target_date.end_of_week(:monday)
+
+        shift_days.select do |day|
+          day.target_date >= week_start &&
+            day.target_date <= week_end &&
+            !weekend_or_holiday?(day)
+        end
       else
         []
       end
@@ -386,7 +424,7 @@ module ShiftGeneration
       ShiftAssignment.joins(:shift_day)
                      .where(employee: employee, shift_days: { shift_period_id: shift_period.id })
                      .where(shift_days: { target_date: week_start..week_end })
-                     .where(work_type: %w[day_shift middle_shift saturday_off sunday_off])
+                     .where(work_type: %w[day_shift middle_shift saturday_off sunday_off national_holiday])
                      .count
     end
 

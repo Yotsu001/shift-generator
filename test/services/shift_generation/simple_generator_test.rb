@@ -113,6 +113,42 @@ class ShiftGeneration::SimpleGeneratorTest < ActiveSupport::TestCase
     assert_nil sunday_types[employees[3].id]
   end
 
+  test "祝日は二人出勤で残り祝日休、出勤者の祝日休は同週内で振り替える" do
+    user = create_user("holiday-rest")
+    employees = 4.times.map do |index|
+      create_employee(
+        user: user,
+        name: "祝日スタッフ#{index + 1}",
+        display_order: index,
+        assignable_zones: [],
+        weekend_work_enabled: index < 2
+      )
+    end
+
+    shift_period = ShiftPeriod.create!(
+      user: user,
+      name: "2026-04-13祝日週",
+      start_date: Date.new(2026, 4, 13),
+      end_date: Date.new(2026, 4, 17)
+    )
+
+    holiday = shift_period.shift_days.find_by!(target_date: Date.new(2026, 4, 15))
+    holiday.update!(day_type: :holiday)
+
+    ShiftGeneration::SimpleGenerator.new(shift_period).call
+
+    holiday_types = holiday.shift_assignments.order(:employee_id).pluck(:employee_id, :work_type).to_h
+    weekday_rest_days = shift_period.shift_days.where(target_date: Date.new(2026, 4, 13)..Date.new(2026, 4, 17)).where.not(id: holiday.id)
+    compensatory_assignments = ShiftAssignment.where(shift_day: weekday_rest_days, employee: employees.first(2), work_type: :national_holiday)
+
+    assert_equal %w[day_shift middle_shift national_holiday national_holiday].sort, holiday.shift_assignments.pluck(:work_type).sort
+    assert_equal "national_holiday", holiday_types[employees[2].id]
+    assert_equal "national_holiday", holiday_types[employees[3].id]
+    assert_equal 2, compensatory_assignments.count
+    assert_equal employees.first(2).map(&:id).sort, compensatory_assignments.pluck(:employee_id).sort
+    assert compensatory_assignments.all? { |assignment| assignment.shift_day.target_date.cweek == holiday.target_date.cweek }
+  end
+
   private
 
   def create_user(suffix)

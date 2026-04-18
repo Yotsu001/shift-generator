@@ -4,6 +4,11 @@ class ShiftAssignmentsController < ApplicationController
   before_action :set_shift_assignment, only: [:update, :destroy]
 
   def create
+    if @shift_day.shift_period.locked?
+      redirect_to shift_period_path(@shift_day.shift_period), alert: "確定済みのシフト期間では割当を登録できません。"
+      return
+    end
+
     @shift_assignment = @shift_day.shift_assignments.new(shift_assignment_params)
 
     if @shift_assignment.save
@@ -11,21 +16,33 @@ class ShiftAssignmentsController < ApplicationController
     else
       prepare_shift_period_show_data
       @open_form_id = "assignment-form-#{@shift_assignment.employee_id}-#{@shift_day.id}"
+      flash.now[:alert] = "割当を更新できませんでした。入力内容を確認してください。"
       render "shift_periods/show", status: :unprocessable_entity
     end
   end
 
   def update
+    if @shift_day.shift_period.locked?
+      redirect_to shift_period_path(@shift_day.shift_period), alert: "確定済みのシフト期間では割当を更新できません。"
+      return
+    end
+
     if @shift_assignment.update(shift_assignment_params)
       redirect_to shift_period_path(@shift_day.shift_period), notice: "割当を更新しました。"
     else
       prepare_shift_period_show_data
       @open_form_id = "edit-assignment-form-#{@shift_assignment.id}"
+      flash.now[:alert] = "割当を更新できませんでした。入力内容を確認してください。"
       render "shift_periods/show", status: :unprocessable_entity
     end
   end
 
   def destroy
+    if @shift_day.shift_period.locked?
+      redirect_to shift_period_path(@shift_day.shift_period), alert: "確定済みのシフト期間では割当を削除できません。"
+      return
+    end
+
     @shift_assignment.destroy
     redirect_to shift_period_path(@shift_day.shift_period), notice: "割当を削除しました。"
   end
@@ -48,7 +65,7 @@ class ShiftAssignmentsController < ApplicationController
 
   def prepare_shift_period_show_data
     @shift_period = @shift_day.shift_period
-    @employees = current_user.employees.active_ordered
+    @employees = current_user.employees.active_ordered.includes(:zones)
     @shift_days = @shift_period.shift_days.order(:target_date)
     @shift_assignments = @shift_period.shift_assignments.includes(:employee, :zone, :shift_day)
     @leave_requests = @shift_period.leave_requests.includes(:employee, :shift_day)

@@ -48,6 +48,11 @@ class ShiftPeriodsController < ApplicationController
   end
 
   def destroy
+    if @shift_period.locked?
+      redirect_to shift_periods_path, alert: "確定済みのシフト期間は削除できません"
+      return
+    end
+
     @shift_period.destroy!
     redirect_to shift_periods_path, notice: "シフト期間を削除しました"
   end
@@ -83,10 +88,15 @@ class ShiftPeriodsController < ApplicationController
   end
 
   def shift_period_update_params
-    params.require(:shift_period).permit(:name, :start_date, :end_date, :status)
+    permitted = params.require(:shift_period).permit(:name, :start_date, :end_date, :status)
+    return permitted unless @shift_period.locked?
+
+    permitted.except(:start_date, :end_date)
   end
 
   def shift_period_date_range_changed?
+    return false if @shift_period.locked?
+
     @shift_period.start_date != parsed_shift_period_date(:start_date) ||
       @shift_period.end_date != parsed_shift_period_date(:end_date)
   end

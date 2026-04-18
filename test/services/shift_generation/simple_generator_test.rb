@@ -75,6 +75,44 @@ class ShiftGeneration::SimpleGeneratorTest < ActiveSupport::TestCase
     assert_includes regular_assignments.map(&:zone_id), zone_b.id
   end
 
+  test "土日は未割当スタッフを土曜は非番、日曜は週休で埋める" do
+    user = create_user("weekend-rest")
+    employees = 4.times.map do |index|
+      create_employee(
+        user: user,
+        name: "週末スタッフ#{index + 1}",
+        display_order: index,
+        assignable_zones: [],
+        weekend_work_enabled: index < 2
+      )
+    end
+
+    shift_period = ShiftPeriod.create!(
+      user: user,
+      name: "2026-04-18週末",
+      start_date: Date.new(2026, 4, 18),
+      end_date: Date.new(2026, 4, 19)
+    )
+
+    saturday = shift_period.shift_days.find_by!(target_date: Date.new(2026, 4, 18))
+    sunday = shift_period.shift_days.find_by!(target_date: Date.new(2026, 4, 19))
+    sunday.leave_requests.create!(employee: employees.last)
+
+    ShiftGeneration::SimpleGenerator.new(shift_period).call
+
+    saturday_types = saturday.shift_assignments.order(:employee_id).pluck(:employee_id, :work_type).to_h
+    sunday_types = sunday.shift_assignments.order(:employee_id).pluck(:employee_id, :work_type).to_h
+
+    assert_equal 4, saturday.shift_assignments.count
+    assert_equal 3, sunday.shift_assignments.count
+    assert_equal %w[day_shift middle_shift saturday_off saturday_off].sort, saturday.shift_assignments.pluck(:work_type).sort
+    assert_equal %w[day_shift middle_shift sunday_off].sort, sunday.shift_assignments.pluck(:work_type).sort
+    assert_equal "saturday_off", saturday_types[employees[2].id]
+    assert_equal "saturday_off", saturday_types[employees[3].id]
+    assert_equal "sunday_off", sunday_types[employees[2].id]
+    assert_nil sunday_types[employees[3].id]
+  end
+
   private
 
   def create_user(suffix)
@@ -85,13 +123,13 @@ class ShiftGeneration::SimpleGeneratorTest < ActiveSupport::TestCase
     )
   end
 
-  def create_employee(user:, name:, display_order:, assignable_zones:, primary_zone: nil, mixed_zone_preferred: false)
+  def create_employee(user:, name:, display_order:, assignable_zones:, primary_zone: nil, mixed_zone_preferred: false, weekend_work_enabled: true)
     employee = user.employees.create!(
       name: name,
       display_order: display_order,
       mixed_zone_enabled: false,
       mixed_zone_preferred: mixed_zone_preferred,
-      weekend_work_enabled: true
+      weekend_work_enabled: weekend_work_enabled
     )
     employee.zones << assignable_zones
     employee.update!(primary_zone: primary_zone) if primary_zone.present?

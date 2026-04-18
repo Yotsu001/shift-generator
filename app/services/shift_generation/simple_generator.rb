@@ -19,6 +19,7 @@ module ShiftGeneration
 
           before_count = shift_day.shift_assignments.count
           assign_weekend_or_holiday(shift_day)
+          assign_default_weekend_rest_days(shift_day)
           shift_day.reload
           after_count = shift_day.shift_assignments.count
 
@@ -102,6 +103,26 @@ module ShiftGeneration
         next if employee.blank?
 
         create_weekend_assignment(shift_day, employee, work_type)
+      end
+    end
+
+    def assign_default_weekend_rest_days(shift_day)
+      work_type = default_weekend_rest_work_type_for(shift_day)
+      return if work_type.blank?
+
+      employees.each do |employee|
+        next if shift_day.leave_request_for(employee).present?
+        next if shift_day.assignment_for(employee).present?
+
+        assign_rest_day(shift_day, employee, work_type)
+      end
+    end
+
+    def default_weekend_rest_work_type_for(shift_day)
+      if shift_day.saturday?
+        "saturday_off"
+      elsif shift_day.sunday?
+        "sunday_off"
       end
     end
 

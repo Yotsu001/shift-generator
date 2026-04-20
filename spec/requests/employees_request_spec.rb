@@ -26,7 +26,8 @@ RSpec.describe "Employees", type: :request do
             zone_ids: [zone.id],
             primary_zone_id: zone.id,
             weekend_work_disabled: "1",
-            mixed_zone_preferred: "1"
+            mixed_zone_preferred: "1",
+            must_staff: "1"
           }
         }
       end.to change(Employee, :count).by(1)
@@ -38,6 +39,7 @@ RSpec.describe "Employees", type: :request do
       expect(employee.primary_zone).to eq(zone)
       expect(employee.weekend_work_enabled).to be(false)
       expect(employee.mixed_zone_preferred).to be(true)
+      expect(employee.must_staff).to be(true)
     end
 
     it "スタッフ情報を更新できること" do
@@ -51,7 +53,8 @@ RSpec.describe "Employees", type: :request do
           zone_ids: [new_zone.id],
           primary_zone_id: new_zone.id,
           weekend_work_disabled: "0",
-          mixed_zone_preferred: "0"
+          mixed_zone_preferred: "0",
+          must_staff: "1"
         }
       }
 
@@ -60,6 +63,7 @@ RSpec.describe "Employees", type: :request do
       expect(employee.primary_zone).to eq(new_zone)
       expect(employee.weekend_work_enabled).to be(true)
       expect(employee.mixed_zone_preferred).to be(false)
+      expect(employee.must_staff).to be(true)
     end
 
     it "スタッフを削除できること" do
@@ -70,6 +74,15 @@ RSpec.describe "Employees", type: :request do
       end.to change(Employee, :count).by(-1)
 
       expect(response).to redirect_to(employees_path)
+    end
+
+    it "スタッフ一覧の各行に詳細画面への遷移先が含まれること" do
+      employee = create(:employee, user: user)
+
+      get employees_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(%(data-href="#{employee_path(employee)}"))
     end
   end
 end

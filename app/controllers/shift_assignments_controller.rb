@@ -12,7 +12,9 @@ class ShiftAssignmentsController < ApplicationController
     @shift_assignment = @shift_day.shift_assignments.new(shift_assignment_params)
 
     if @shift_assignment.save
-      redirect_to shift_period_path(@shift_day.shift_period), notice: "割当を登録しました。"
+      redirect_to shift_period_path(@shift_day.shift_period),
+                  notice: "割当を登録しました。",
+                  alert: must_staff_alert_message
     else
       prepare_shift_period_show_data
       @open_form_id = "assignment-form-#{@shift_assignment.employee_id}-#{@shift_day.id}"
@@ -28,7 +30,9 @@ class ShiftAssignmentsController < ApplicationController
     end
 
     if @shift_assignment.update(shift_assignment_params)
-      redirect_to shift_period_path(@shift_day.shift_period), notice: "割当を更新しました。"
+      redirect_to shift_period_path(@shift_day.shift_period),
+                  notice: "割当を更新しました。",
+                  alert: must_staff_alert_message
     else
       prepare_shift_period_show_data
       @open_form_id = "edit-assignment-form-#{@shift_assignment.id}"
@@ -44,7 +48,9 @@ class ShiftAssignmentsController < ApplicationController
     end
 
     @shift_assignment.destroy
-    redirect_to shift_period_path(@shift_day.shift_period), notice: "割当を削除しました。"
+    redirect_to shift_period_path(@shift_day.shift_period),
+                notice: "割当を削除しました。",
+                alert: must_staff_alert_message
   end
 
   private
@@ -70,5 +76,12 @@ class ShiftAssignmentsController < ApplicationController
     @shift_assignments = @shift_period.shift_assignments.includes(:employee, :zone, :shift_day)
     @leave_requests = @shift_period.leave_requests.includes(:employee, :shift_day)
     @zones = Zone.all
+    @must_staff_missing_days = @shift_period.shift_days_missing_must_staff
+  end
+
+  def must_staff_alert_message
+    return unless @shift_day.missing_must_staff?
+
+    "#{@shift_day.target_date.strftime('%Y-%m-%d')} はマスト要員が未割当です。"
   end
 end

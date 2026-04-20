@@ -41,6 +41,13 @@ RSpec.describe Employee, type: :model do
       expect(employee.errors.of_kind?(:weekend_work_enabled, :inclusion)).to be(true)
     end
 
+    it "must_staff は true または false が必須であること" do
+      employee = build(:employee, must_staff: nil)
+
+      expect(employee).not_to be_valid
+      expect(employee.errors.of_kind?(:must_staff, :inclusion)).to be(true)
+    end
+
     it "primary_zone が担当可能区に含まれていれば有効であること" do
       zone = create(:zone)
       employee = create(:employee)

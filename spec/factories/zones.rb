@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :zone do
     sequence(:name) { |n| "#{Faker::Address.community} #{n}" }
-    sequence(:position)
+    position { Zone.next_position }
     active { true }
   end
 end

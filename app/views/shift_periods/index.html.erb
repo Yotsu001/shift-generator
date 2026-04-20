@@ -3,7 +3,7 @@
     <div>
       <p class="eyebrow">シフト期間</p>
       <h1 class="page-title">シフト期間一覧</h1>
-      <p class="page-subtitle">作成済みのシフト期間を、状態ごとに見通しよく確認できます。</p>
+      <p class="page-subtitle">作成済みのシフト期間を確認できます。</p>
     </div>
     <div class="page-actions">
       <%= link_to "新しいシフト期間を作成", new_shift_period_path, class: "button button-primary" %>
@@ -25,7 +25,7 @@
         </thead>
         <tbody>
           <% @shift_periods.each do |shift_period| %>
-            <tr>
+            <tr class="clickable-row" data-href="<%= shift_period_path(shift_period) %>" tabindex="0" role="link" aria-label="<%= "#{shift_period.name}の詳細へ移動" %>">
               <td><strong><%= shift_period.name %></strong></td>
               <td><%= shift_period.start_date %></td>
               <td><%= shift_period.end_date %></td>

@@ -49,6 +49,10 @@ class ShiftPeriod < ApplicationRecord
     updated_count
   end
 
+  def shift_days_missing_must_staff
+    shift_days.includes(shift_assignments: :employee).order(:target_date).select(&:missing_must_staff?)
+  end
+
   private
 
   def end_date_after_start_date

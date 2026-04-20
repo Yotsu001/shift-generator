@@ -63,7 +63,9 @@ class ShiftPeriodsController < ApplicationController
 
   def generate
     ShiftGeneration::SimpleGenerator.new(@shift_period).call
-    redirect_to @shift_period, notice: "平日の自動割当を生成しました"
+    redirect_to @shift_period,
+                notice: "平日の自動割当を生成しました",
+                alert: must_staff_alert_message(@shift_period)
   rescue StandardError => e
     Rails.logger.error e.full_message
     redirect_to @shift_period, alert: "自動生成に失敗しました"
@@ -120,5 +122,13 @@ class ShiftPeriodsController < ApplicationController
     @shift_assignments = @shift_period.shift_assignments.includes(:employee, :zone, :shift_day)
     @leave_requests = @shift_period.leave_requests.includes(:employee, :shift_day)
     @zones = Zone.all
+    @must_staff_missing_days = @shift_period.shift_days_missing_must_staff
+  end
+
+  def must_staff_alert_message(shift_period)
+    missing_days = shift_period.shift_days_missing_must_staff
+    return if missing_days.blank?
+
+    "マスト要員を割り当てられない平日があります（#{missing_days.map { |day| day.target_date.strftime('%Y-%m-%d') }.join('、')}）。希望休などを優先した結果、未割当になっている可能性があります。"
   end
 end

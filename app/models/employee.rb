@@ -12,9 +12,11 @@ class Employee < ApplicationRecord
   validates :active, inclusion: { in: [true, false] }
   validates :mixed_zone_enabled, inclusion: { in: [true, false] }
   validates :weekend_work_enabled, inclusion: { in: [true, false] }
+  validates :must_staff, inclusion: { in: [true, false] }
   validate :primary_zone_must_be_in_assignable_zones
 
   scope :active_ordered, -> { where(active: true).order(:display_order, :id) }
+  scope :must_staff, -> { where(must_staff: true) }
 
   def weekend_work_disabled
     !weekend_work_enabled

@@ -17,8 +17,8 @@
 
   <div class="form-group">
     <%= form.label :position, "表示順" %>
-    <%= form.number_field :position, min: 0 %>
-    <p class="form-hint">数字が小さいほど先頭に表示されます。</p>
+    <%= form.select :position, Zone.available_positions_for(@zone) %>
+    <p class="form-hint">登録済みの区数に応じた表示順のみ選択できます。</p>
   </div>
 
   <div class="form-group form-group--inline">

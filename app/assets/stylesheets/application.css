@@ -313,6 +313,16 @@ form.button_to .button-danger {
   background: rgba(221, 233, 228, 0.24);
 }
 
+.clickable-row {
+  cursor: pointer;
+}
+
+.clickable-row:focus-visible {
+  outline: 2px solid var(--accent-strong);
+  outline-offset: -2px;
+  background: rgba(221, 233, 228, 0.3);
+}
+
 .table-actions {
   display: flex;
   flex-wrap: wrap;
@@ -489,6 +499,17 @@ form.button_to .button-danger {
   border: 1px solid #d8a8a5;
 }
 
+.must-staff-alert {
+  padding: 4px 0;
+}
+
+.must-staff-alert__list {
+  margin: 0;
+  padding-left: 20px;
+  color: #8f4c4b;
+  font-weight: 700;
+}
+
 @media (max-width: 840px) {
   .app-header__inner,
   .page-header,
@@ -500,6 +521,54 @@ form.button_to .button-danger {
   .dashboard-grid,
   .form-row {
     grid-template-columns: 1fr;
+  }
+
+  .app-header {
+    position: static;
+    backdrop-filter: none;
+  }
+
+  .app-header__inner,
+  .app-main {
+    width: min(100%, calc(100% - 20px));
+  }
+
+  .app-header__inner {
+    gap: 14px;
+    padding: 12px 0;
+  }
+
+  .app-brand {
+    font-size: 1.15rem;
+  }
+
+  .app-brand__tagline,
+  .app-user-badge {
+    display: none;
+  }
+
+  .app-nav {
+    width: 100%;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: thin;
+  }
+
+  .app-nav__link {
+    min-height: 36px;
+    padding: 0 14px;
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+
+  .app-main {
+    padding: 20px 0 40px;
+  }
+
+  .flash-wrapper {
+    margin-bottom: 16px;
   }
 }
 

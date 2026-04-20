@@ -17,6 +17,20 @@
     <%= render "shift_periods/shift_period_summary", shift_period: @shift_period %>
   </section>
 
+  <% if @must_staff_missing_days.present? %>
+    <section class="card">
+      <div class="must-staff-alert">
+        <h2 class="section-title">マスト要員アラート</h2>
+        <p class="section-copy">以下の平日はマスト要員が未割当です。希望休などを優先した結果か、手動変更で外れている可能性があります。</p>
+        <ul class="must-staff-alert__list">
+          <% @must_staff_missing_days.each do |shift_day| %>
+            <li><%= shift_day.target_date.strftime("%Y-%m-%d") %></li>
+          <% end %>
+        </ul>
+      </div>
+    </section>
+  <% end %>
+
   <section class="card">
     <div class="section-header">
       <div>

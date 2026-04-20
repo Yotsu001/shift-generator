@@ -39,4 +39,19 @@ class ShiftDay < ApplicationRecord
 
     true
   end
+
+  def weekday_work_assignment_scope
+    shift_assignments.where(work_type: %w[day_shift middle_shift night_shift])
+  end
+
+  def must_staff_working?
+    weekday_work_assignment_scope.joins(:employee).where(employees: { must_staff: true }).exists?
+  end
+
+  def missing_must_staff?
+    return false unless weekday?
+    return false unless shift_period.user.employees.where(active: true, must_staff: true).exists?
+
+    !must_staff_working?
+  end
 end

@@ -3,7 +3,7 @@
     <div>
       <p class="eyebrow">スタッフ</p>
       <h1 class="page-title">スタッフ詳細</h1>
-      <p class="page-subtitle">個々の条件や担当区を、一目で把握しやすい形でまとめています。</p>
+      <p class="page-subtitle">個々のスタッフの条件や担当区を確認できます。</p>
     </div>
     <div class="page-actions">
       <%= link_to '編集', edit_employee_path(@employee), class: "button button-primary" %>
@@ -39,6 +39,10 @@
           <dd><%= @employee.mixed_zone_preferred ? 'する' : 'しない' %></dd>
         </div>
       <% end %>
+      <div>
+        <dt>マスト要員</dt>
+        <dd><%= @employee.must_staff ? 'する' : 'しない' %></dd>
+      </div>
     </dl>
   </section>
 </section>

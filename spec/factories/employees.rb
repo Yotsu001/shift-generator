@@ -7,6 +7,7 @@ FactoryBot.define do
     mixed_zone_enabled { false }
     mixed_zone_preferred { false }
     weekend_work_enabled { true }
+    must_staff { false }
     primary_zone { nil }
 
     trait :with_zone do

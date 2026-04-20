@@ -22,6 +22,7 @@
             <th>担当可能区</th>
             <th>土日祝出勤不可</th>
             <th>混合区担当候補</th>
+            <th>マスト要員</th>
             <th>操作</th>
           </tr>
         </thead>
@@ -34,6 +35,7 @@
               <td><%= employee.zones.order(:position).pluck(:name).join('、').presence || '未設定' %></td>
               <td><%= employee.weekend_work_disabled ? '○' : '-' %></td>
               <td><%= employee.mixed_zone_preferred ? '○' : '-' %></td>
+              <td><%= employee.must_staff ? '○' : '-' %></td>
               <td class="table-actions">
                 <%= link_to '詳細', employee_path(employee), class: "text-link" %>
                 <%= link_to '編集', edit_employee_path(employee), class: "text-link" %>

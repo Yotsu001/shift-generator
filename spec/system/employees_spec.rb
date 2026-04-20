@@ -14,11 +14,13 @@ RSpec.describe "スタッフ管理", type: :system do
     select zone.name, from: "主担当区"
     check "土日祝出勤不可にする"
     check "混合区担当候補にする"
+    check "マスト要員にする"
     click_button "登録する"
 
     expect(page).to have_current_path(employees_path)
     expect(page).to have_content("スタッフを登録しました。")
     expect(page).to have_content(employee_name)
     expect(page).to have_content(zone.name)
+    expect(page).to have_content("○")
   end
 end

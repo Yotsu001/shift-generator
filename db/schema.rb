@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_04_11_170000) do
+ActiveRecord::Schema[7.1].define(version: 2026_04_20_120000) do
   create_table "employee_zones", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "employee_id", null: false
     t.bigint "zone_id", null: false
@@ -32,8 +32,10 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_11_170000) do
     t.datetime "updated_at", null: false
     t.boolean "mixed_zone_preferred", default: false, null: false
     t.bigint "primary_zone_id"
+    t.boolean "must_staff", default: false, null: false
     t.index ["active"], name: "index_employees_on_active"
     t.index ["display_order"], name: "index_employees_on_display_order"
+    t.index ["must_staff"], name: "index_employees_on_must_staff"
     t.index ["primary_zone_id"], name: "index_employees_on_primary_zone_id"
     t.index ["user_id"], name: "index_employees_on_user_id"
   end

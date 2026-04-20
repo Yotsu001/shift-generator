@@ -59,12 +59,12 @@ module ShiftGeneration
     # -------------------------
     def assign_for_day(shift_day)
       assign_middle_shift_for_day(shift_day)
-      assign_regular_zones_for_day(shift_day)
+      zone_counts = regular_zone_assignment_counts_for(shift_day)
+      assign_must_staff_for_day(shift_day, zone_counts)
+      assign_regular_zones_for_day(shift_day, zone_counts)
     end
 
-    def assign_regular_zones_for_day(shift_day)
-      zone_counts = regular_zone_assignment_counts_for(shift_day)
-
+    def assign_regular_zones_for_day(shift_day, zone_counts)
       candidate_employees_for(shift_day).each do |employee|
         zone = selectable_zone_for(employee, zone_counts)
         next if zone.blank?
@@ -81,6 +81,30 @@ module ShiftGeneration
 
         Rails.logger.debug "[weekday] created assignment_id=#{assignment.id} employee_id=#{employee.id} zone_name=#{zone.name} work_type=#{assignment.work_type}"
       end
+    end
+
+    def assign_must_staff_for_day(shift_day, zone_counts)
+      return if must_staff_assigned_on?(shift_day)
+
+      employee = must_staff_candidate_employees_for(shift_day).find do |candidate|
+        selectable_zone_for(candidate, zone_counts).present?
+      end
+      return if employee.blank?
+
+      zone = selectable_zone_for(employee, zone_counts)
+      return if zone.blank?
+
+      assignment = shift_day.shift_assignments.build(
+        employee: employee,
+        work_type: "day_shift",
+        zone: zone
+      )
+
+      assignment.save!
+      increment_weekday_assignment_count(employee)
+      zone_counts[zone.id] += 1
+
+      Rails.logger.debug "[weekday-must] created assignment_id=#{assignment.id} employee_id=#{employee.id} zone_name=#{zone.name} work_type=#{assignment.work_type}"
     end
 
     # -------------------------
@@ -190,7 +214,7 @@ module ShiftGeneration
                             .reject { |employee| unavailable_for_work_assignment?(shift_day, employee) }
 
       candidates.sort_by do |employee|
-        [middle_shift_assignment_count(employee), employee.id]
+        [employee.must_staff ? 0 : 1, middle_shift_assignment_count(employee), employee.id]
       end
     end
 
@@ -394,6 +418,20 @@ module ShiftGeneration
       candidates.sort_by do |employee|
         [weekday_assignment_count(employee), employee.id]
       end
+    end
+
+    def must_staff_candidate_employees_for(shift_day)
+      employees.select(&:must_staff)
+               .reject { |employee| unavailable_for_work_assignment?(shift_day, employee) }
+               .sort_by do |employee|
+        [weekday_assignment_count(employee), employee.id]
+      end
+    end
+
+    def must_staff_assigned_on?(shift_day)
+      shift_day.shift_assignments.joins(:employee)
+               .where(work_type: %w[day_shift middle_shift night_shift], employees: { must_staff: true })
+               .exists?
     end
 
     def unavailable_for_work_assignment?(shift_day, employee)

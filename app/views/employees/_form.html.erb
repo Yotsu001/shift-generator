@@ -45,6 +45,11 @@
     </div>
   <% end %>
 
+  <div class="form-group form-group--inline">
+    <%= form.label :must_staff, 'マスト要員にする' %>
+    <%= form.check_box :must_staff %>
+  </div>
+
   <div class="form-actions">
     <%= form.submit @employee.persisted? ? '更新する' : '登録する' %>
   </div>

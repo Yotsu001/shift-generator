@@ -34,4 +34,17 @@ RSpec.describe "シフト期間管理", type: :system do
     expect(page).not_to have_button("リセット")
     expect(page).not_to have_link("編集")
   end
+
+  it "マスト要員が未割当の日は詳細画面にアラートが表示されること" do
+    user = create(:user, password: "password123")
+    shift_period = create(:shift_period, user: user, start_date: Date.new(2026, 5, 1), end_date: Date.new(2026, 5, 1))
+    zone = create(:zone)
+    create(:employee, :with_zone, user: user, assignable_zone: zone, must_staff: true)
+
+    login_as_user(user)
+    visit shift_period_path(shift_period)
+
+    expect(page).to have_content("マスト要員アラート")
+    expect(page).to have_content("2026-05-01")
+  end
 end

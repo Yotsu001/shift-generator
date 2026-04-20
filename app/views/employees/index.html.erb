@@ -27,7 +27,7 @@
         </thead>
         <tbody>
           <% @employees.each do |employee| %>
-            <tr>
+            <tr class="clickable-row" data-href="<%= employee_path(employee) %>" tabindex="0" role="link" aria-label="<%= "#{employee.name}の詳細へ移動" %>">
               <td><%= employee.id %></td>
               <td><strong><%= employee.name %></strong></td>
               <td><%= employee.primary_zone&.name || '未設定' %></td>

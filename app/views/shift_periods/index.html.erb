@@ -25,7 +25,7 @@
         </thead>
         <tbody>
           <% @shift_periods.each do |shift_period| %>
-            <tr>
+            <tr class="clickable-row" data-href="<%= shift_period_path(shift_period) %>" tabindex="0" role="link" aria-label="<%= "#{shift_period.name}の詳細へ移動" %>">
               <td><strong><%= shift_period.name %></strong></td>
               <td><%= shift_period.start_date %></td>
               <td><%= shift_period.end_date %></td>

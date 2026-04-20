@@ -90,5 +90,14 @@ RSpec.describe "ShiftPeriods", type: :request do
 
       expect(response).to redirect_to(shift_period_path(shift_period))
     end
+
+    it "シフト期間一覧の各行に詳細画面への遷移先が含まれること" do
+      shift_period = create(:shift_period, user: user)
+
+      get shift_periods_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(%(data-href="#{shift_period_path(shift_period)}"))
+    end
   end
 end

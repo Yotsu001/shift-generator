@@ -25,7 +25,7 @@
         </thead>
         <tbody>
           <% @zones.each do |zone| %>
-            <tr>
+            <tr class="clickable-row" data-href="<%= edit_zone_path(zone) %>" tabindex="0" role="link" aria-label="<%= "#{zone.name}の編集画面へ移動" %>">
               <td><%= zone.id %></td>
               <td><strong><%= zone.name %></strong></td>
               <td><%= zone.position %></td>

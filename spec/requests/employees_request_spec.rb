@@ -71,5 +71,14 @@ RSpec.describe "Employees", type: :request do
 
       expect(response).to redirect_to(employees_path)
     end
+
+    it "スタッフ一覧の各行に詳細画面への遷移先が含まれること" do
+      employee = create(:employee, user: user)
+
+      get employees_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(%(data-href="#{employee_path(employee)}"))
+    end
   end
 end

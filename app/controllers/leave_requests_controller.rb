@@ -16,7 +16,7 @@ class LeaveRequestsController < ApplicationController
     else
       prepare_shift_period_show_data
       @open_form_id = "leave-form-#{@leave_request.employee_id}-#{@shift_day.id}"
-      render "shift_periods/show", status: :unprocessable_entity
+      render "shift_periods/show", status: :unprocessable_content
     end
   end
 
@@ -31,7 +31,7 @@ class LeaveRequestsController < ApplicationController
     else
       prepare_shift_period_show_data
       @open_form_id = "edit-leave-form-#{@leave_request.id}"
-      render "shift_periods/show", status: :unprocessable_entity
+      render "shift_periods/show", status: :unprocessable_content
     end
   end
 

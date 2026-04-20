@@ -17,7 +17,7 @@ class ShiftAssignmentsController < ApplicationController
       prepare_shift_period_show_data
       @open_form_id = "assignment-form-#{@shift_assignment.employee_id}-#{@shift_day.id}"
       flash.now[:alert] = "割当を更新できませんでした。入力内容を確認してください。"
-      render "shift_periods/show", status: :unprocessable_entity
+      render "shift_periods/show", status: :unprocessable_content
     end
   end
 
@@ -33,7 +33,7 @@ class ShiftAssignmentsController < ApplicationController
       prepare_shift_period_show_data
       @open_form_id = "edit-assignment-form-#{@shift_assignment.id}"
       flash.now[:alert] = "割当を更新できませんでした。入力内容を確認してください。"
-      render "shift_periods/show", status: :unprocessable_entity
+      render "shift_periods/show", status: :unprocessable_content
     end
   end
 

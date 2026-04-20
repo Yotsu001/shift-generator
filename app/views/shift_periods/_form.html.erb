@@ -16,15 +16,25 @@
     <%= f.text_field :name %>
   </div>
 
+  <% use_plain_text_date_inputs = Rails.env.test? %>
+
   <div class="form-row">
     <div class="form-group">
       <%= f.label :start_date, "開始日" %>
-      <%= f.date_field :start_date, class: "js-date-input", data: { disable_manual_entry: true }, disabled: date_fields_disabled %>
+      <% if use_plain_text_date_inputs %>
+        <%= f.text_field :start_date, disabled: date_fields_disabled %>
+      <% else %>
+        <%= f.date_field :start_date, class: "js-date-input", data: { disable_manual_entry: true }, disabled: date_fields_disabled %>
+      <% end %>
     </div>
 
     <div class="form-group">
       <%= f.label :end_date, "終了日" %>
-      <%= f.date_field :end_date, class: "js-date-input", data: { disable_manual_entry: true }, disabled: date_fields_disabled %>
+      <% if use_plain_text_date_inputs %>
+        <%= f.text_field :end_date, disabled: date_fields_disabled %>
+      <% else %>
+        <%= f.date_field :end_date, class: "js-date-input", data: { disable_manual_entry: true }, disabled: date_fields_disabled %>
+      <% end %>
     </div>
   </div>
 

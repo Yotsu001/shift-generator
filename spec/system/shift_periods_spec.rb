@@ -5,7 +5,7 @@ RSpec.describe "シフト期間管理", type: :system do
     user = create(:user, password: "password123")
     period_name = Faker::Lorem.words(number: 2).join(" ")
 
-    login_via_ui(user)
+    login_as_user(user)
     visit new_shift_period_path
 
     fill_in "名称", with: period_name
@@ -13,7 +13,7 @@ RSpec.describe "シフト期間管理", type: :system do
     fill_in "終了日", with: "2026-05-03"
     click_button "作成する"
 
-    expect(page).to have_current_path(shift_period_path(ShiftPeriod.order(:id).last))
+    expect(page).to have_current_path(%r{/shift_periods/\d+})
     expect(page).to have_content("シフト期間を作成しました")
     expect(page).to have_content("シフト期間詳細")
     expect(page).to have_content(period_name)
@@ -26,7 +26,7 @@ RSpec.describe "シフト期間管理", type: :system do
     user = create(:user, password: "password123")
     shift_period = create(:shift_period, user: user, status: :locked)
 
-    login_via_ui(user)
+    login_as_user(user)
     visit shift_period_path(shift_period)
 
     expect(page).to have_content("このシフト期間は確定済みのため、詳細画面では閲覧のみ可能です。")

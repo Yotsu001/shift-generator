@@ -6,7 +6,7 @@ RSpec.describe "スタッフ管理", type: :system do
     zone = create(:zone)
     employee_name = Faker::Name.name
 
-    login_via_ui(user)
+    login_as_user(user)
     visit new_employee_path
 
     fill_in "スタッフ名", with: employee_name

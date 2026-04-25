@@ -123,7 +123,6 @@
 | Column       | Type       | Options                     |
 | ------------ | ---------- | --------------------------- |
 | shift_day_id | references | null: false, foreign_key: true |
-| user_id      | references | foreign_key: true           |
 | work_type    | integer    | null: false, default: 0     |
 | zone_id      | references | foreign_key: true           |
 | employee_id  | references | foreign_key: true           |
@@ -131,10 +130,10 @@
 | updated_at   | datetime   | null: false                 |
 
 ### Indexes
-- unique index on `[:shift_day_id, :user_id]`
+- unique index on `[:shift_day_id, :employee_id]`
+- index on `[:shift_day_id, :work_type]`
 - index on `:employee_id`
 - index on `:shift_day_id`
-- index on `:user_id`
 - index on `:zone_id`
 
 ### Association
@@ -146,7 +145,6 @@
 
 | Column       | Type       | Options                     |
 | ------------ | ---------- | --------------------------- |
-| user_id      | references | foreign_key: true           |
 | shift_day_id | references | null: false, foreign_key: true |
 | note         | string     |                             |
 | employee_id  | references | foreign_key: true           |
@@ -154,10 +152,9 @@
 | updated_at   | datetime   | null: false                 |
 
 ### Indexes
-- unique index on `[:user_id, :shift_day_id]`
+- unique index on `[:shift_day_id, :employee_id]`
 - index on `:employee_id`
 - index on `:shift_day_id`
-- index on `:user_id`
 
 ### Association
 - belongs_to :shift_day

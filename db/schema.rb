@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_04_20_120000) do
+ActiveRecord::Schema[7.1].define(version: 2026_04_25_165325) do
   create_table "employee_zones", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "employee_id", null: false
     t.bigint "zone_id", null: false
@@ -41,30 +41,27 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_20_120000) do
   end
 
   create_table "leave_requests", charset: "utf8mb3", force: :cascade do |t|
-    t.bigint "user_id"
     t.bigint "shift_day_id", null: false
     t.string "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "employee_id"
     t.index ["employee_id"], name: "index_leave_requests_on_employee_id"
+    t.index ["shift_day_id", "employee_id"], name: "index_leave_requests_on_shift_day_id_and_employee_id", unique: true
     t.index ["shift_day_id"], name: "index_leave_requests_on_shift_day_id"
-    t.index ["user_id", "shift_day_id"], name: "index_leave_requests_on_user_id_and_shift_day_id", unique: true
-    t.index ["user_id"], name: "index_leave_requests_on_user_id"
   end
 
   create_table "shift_assignments", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "shift_day_id", null: false
-    t.bigint "user_id"
     t.integer "work_type", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "zone_id"
     t.bigint "employee_id"
     t.index ["employee_id"], name: "index_shift_assignments_on_employee_id"
-    t.index ["shift_day_id", "user_id"], name: "index_shift_assignments_on_shift_day_id_and_user_id", unique: true
+    t.index ["shift_day_id", "employee_id"], name: "index_shift_assignments_on_shift_day_id_and_employee_id", unique: true
+    t.index ["shift_day_id", "work_type"], name: "index_shift_assignments_on_shift_day_id_and_work_type"
     t.index ["shift_day_id"], name: "index_shift_assignments_on_shift_day_id"
-    t.index ["user_id"], name: "index_shift_assignments_on_user_id"
     t.index ["zone_id"], name: "index_shift_assignments_on_zone_id"
   end
 
@@ -120,10 +117,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_20_120000) do
   add_foreign_key "employees", "zones", column: "primary_zone_id"
   add_foreign_key "leave_requests", "employees"
   add_foreign_key "leave_requests", "shift_days"
-  add_foreign_key "leave_requests", "users"
   add_foreign_key "shift_assignments", "employees"
   add_foreign_key "shift_assignments", "shift_days"
-  add_foreign_key "shift_assignments", "users"
   add_foreign_key "shift_assignments", "zones"
   add_foreign_key "shift_days", "shift_periods"
   add_foreign_key "shift_periods", "users"

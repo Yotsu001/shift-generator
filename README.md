@@ -1,24 +1,15 @@
 # テーブル設計
 
-現在のテーブル設計は `db/schema.rb` を基準にしています。
-
 ## users テーブル
 
 | Column               | Type     | Options                          |
 | -------------------- | -------- | -------------------------------- |
 | email                | string   | null: false, default: ""         |
 | encrypted_password   | string   | null: false, default: ""         |
-| reset_password_token | string   | unique                           |
-| reset_password_sent_at | datetime |                                  |
-| remember_created_at  | datetime |                                  |
 | name                 | string   | null: false, default: ""         |
-| admin                | boolean  | null: false, default: false      |
-| created_at           | datetime | null: false                      |
-| updated_at           | datetime | null: false                      |
 
 ### Indexes
 - unique index on `:email`
-- unique index on `:reset_password_token`
 
 ### Association
 - has_many :shift_periods
@@ -40,8 +31,6 @@
 | mixed_zone_preferred | boolean    | null: false, default: false       |
 | primary_zone_id      | references | foreign_key: { to_table: :zones } |
 | must_staff           | boolean    | null: false, default: false       |
-| created_at           | datetime   | null: false                       |
-| updated_at           | datetime   | null: false                       |
 
 ### Indexes
 - index on `:active`
@@ -62,11 +51,9 @@
 
 | Column     | Type     | Options                    |
 | ---------- | -------- | -------------------------- |
-| name       | string   | null: false, unique        |
+| name       | string   | null: false                |
 | position   | integer  | null: false, default: 0    |
 | active     | boolean  | null: false, default: true |
-| created_at | datetime | null: false                |
-| updated_at | datetime | null: false                |
 
 ### Indexes
 - unique index on `:name`
@@ -86,8 +73,6 @@
 | end_date   | date       | null: false                    |
 | status     | integer    | null: false, default: 0        |
 | user_id    | references | null: false, foreign_key: true |
-| created_at | datetime   | null: false                    |
-| updated_at | datetime   | null: false                    |
 
 ### Indexes
 - unique index on `[:user_id, :start_date, :end_date]`
@@ -106,8 +91,6 @@
 | shift_period_id | references | null: false, foreign_key: true |
 | target_date     | date       | null: false                    |
 | day_type        | integer    | null: false, default: 0        |
-| created_at      | datetime   | null: false                    |
-| updated_at      | datetime   | null: false                    |
 
 ### Indexes
 - unique index on `[:shift_period_id, :target_date]`
@@ -126,8 +109,6 @@
 | work_type    | integer    | null: false, default: 0     |
 | zone_id      | references | foreign_key: true           |
 | employee_id  | references | foreign_key: true           |
-| created_at   | datetime   | null: false                 |
-| updated_at   | datetime   | null: false                 |
 
 ### Indexes
 - unique index on `[:shift_day_id, :employee_id]`
@@ -148,8 +129,6 @@
 | shift_day_id | references | null: false, foreign_key: true |
 | note         | string     |                             |
 | employee_id  | references | foreign_key: true           |
-| created_at   | datetime   | null: false                 |
-| updated_at   | datetime   | null: false                 |
 
 ### Indexes
 - unique index on `[:shift_day_id, :employee_id]`
@@ -166,8 +145,6 @@
 | ----------- | ---------- | ------------------------------ |
 | employee_id | references | null: false, foreign_key: true |
 | zone_id     | references | null: false, foreign_key: true |
-| created_at  | datetime   | null: false                    |
-| updated_at  | datetime   | null: false                    |
 
 ### Indexes
 - unique index on `[:employee_id, :zone_id]`

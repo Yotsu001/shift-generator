@@ -1,14 +1,14 @@
-require "rails_helper"
+require 'rails_helper'
 
-RSpec.describe "LeaveRequests", type: :request do
-  describe "希望休管理" do
+RSpec.describe 'LeaveRequests', type: :request do
+  describe '希望休管理' do
     let(:user) { create(:user) }
 
     before do
       sign_in user
     end
 
-    it "未確定のシフト期間なら希望休を登録できること" do
+    it '未確定のシフト期間なら希望休を登録できること' do
       shift_period = create(:shift_period, user: user, start_date: Date.new(2026, 5, 1), end_date: Date.new(2026, 5, 1))
       employee = create(:employee, user: user)
       shift_day = shift_period.shift_days.first
@@ -25,7 +25,7 @@ RSpec.describe "LeaveRequests", type: :request do
       expect(response).to redirect_to(shift_period_path(shift_period))
     end
 
-    it "不正な希望休は詳細画面を再表示すること" do
+    it '不正な希望休は詳細画面を再表示すること' do
       shift_period = create(:shift_period, user: user, start_date: Date.new(2026, 5, 1), end_date: Date.new(2026, 5, 1))
       zone = create(:zone)
       employee = create(:employee, :with_zone, user: user, assignable_zone: zone)
@@ -42,10 +42,10 @@ RSpec.describe "LeaveRequests", type: :request do
       end.not_to change(LeaveRequest, :count)
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(response.body).to include("シフト期間詳細")
+      expect(response.body).to include('シフト期間詳細')
     end
 
-    it "希望休を更新できること" do
+    it '希望休を更新できること' do
       shift_period = create(:shift_period, user: user, start_date: Date.new(2026, 5, 1), end_date: Date.new(2026, 5, 1))
       employee = create(:employee, user: user)
       shift_day = shift_period.shift_days.first
@@ -63,7 +63,7 @@ RSpec.describe "LeaveRequests", type: :request do
       expect(leave_request.reload.note).to eq(new_note)
     end
 
-    it "希望休を削除できること" do
+    it '希望休を削除できること' do
       shift_period = create(:shift_period, user: user, start_date: Date.new(2026, 5, 1), end_date: Date.new(2026, 5, 1))
       employee = create(:employee, user: user)
       shift_day = shift_period.shift_days.first
@@ -76,8 +76,9 @@ RSpec.describe "LeaveRequests", type: :request do
       expect(response).to redirect_to(shift_period_path(shift_period))
     end
 
-    it "確定済みのシフト期間では希望休を登録できないこと" do
-      shift_period = create(:shift_period, user: user, status: :locked, start_date: Date.new(2026, 5, 1), end_date: Date.new(2026, 5, 1))
+    it '確定済みのシフト期間では希望休を登録できないこと' do
+      shift_period = create(:shift_period, user: user, status: :locked, start_date: Date.new(2026, 5, 1),
+                                           end_date: Date.new(2026, 5, 1))
       employee = create(:employee, user: user)
       shift_day = shift_period.shift_days.first
 

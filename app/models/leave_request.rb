@@ -11,9 +11,9 @@ class LeaveRequest < ApplicationRecord
   def cannot_request_if_shift_assignment_exists
     return if employee.blank? || shift_day.blank?
 
-    if ShiftAssignment.exists?(employee_id: employee.id, shift_day_id: shift_day.id)
-      errors.add(:base, "すでに勤務が登録されているため希望休を登録できません")
-    end
+    return unless ShiftAssignment.exists?(employee_id: employee.id, shift_day_id: shift_day.id)
+
+    errors.add(:base, 'すでに勤務が登録されているため希望休を登録できません')
   end
 
   def employee_must_belong_to_shift_period_owner
@@ -21,6 +21,6 @@ class LeaveRequest < ApplicationRecord
     return if shift_day.shift_period.blank?
     return if employee.user_id == shift_day.shift_period.user_id
 
-    errors.add(:employee, "はこのシフト期間の作成者に属するスタッフを選択してください")
+    errors.add(:employee, 'はこのシフト期間の作成者に属するスタッフを選択してください')
   end
 end

@@ -14,7 +14,7 @@ class ZonesController < ApplicationController
     @zone = Zone.new(zone_params)
 
     if @zone.save_with_position_adjustment
-      redirect_to zones_path, notice: "区を登録しました。"
+      redirect_to zones_path, notice: '区を登録しました。'
     else
       render :new, status: :unprocessable_content
     end
@@ -25,7 +25,7 @@ class ZonesController < ApplicationController
 
   def update
     if @zone.update_with_position_adjustment(zone_params)
-      redirect_to zones_path, notice: "区情報を更新しました。"
+      redirect_to zones_path, notice: '区情報を更新しました。'
     else
       render :edit, status: :unprocessable_content
     end

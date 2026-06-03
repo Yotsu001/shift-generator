@@ -71,7 +71,7 @@ module ShiftGeneration
 
         assignment = shift_day.shift_assignments.build(
           employee: employee,
-          work_type: "day_shift",
+          work_type: 'day_shift',
           zone: zone
         )
 
@@ -96,7 +96,7 @@ module ShiftGeneration
 
       assignment = shift_day.shift_assignments.build(
         employee: employee,
-        work_type: "day_shift",
+        work_type: 'day_shift',
         zone: zone
       )
 
@@ -144,11 +144,11 @@ module ShiftGeneration
 
     def default_weekend_rest_work_type_for(shift_day)
       if shift_day.saturday?
-        "saturday_off"
+        'saturday_off'
       elsif shift_day.sunday?
-        "sunday_off"
+        'sunday_off'
       elsif shift_day.holiday?
-        "national_holiday"
+        'national_holiday'
       end
     end
 
@@ -196,7 +196,7 @@ module ShiftGeneration
 
       assignment = shift_day.shift_assignments.build(
         employee: employee,
-        work_type: "middle_shift"
+        work_type: 'middle_shift'
       )
 
       assignment.save!
@@ -206,7 +206,7 @@ module ShiftGeneration
     end
 
     def middle_shift_already_assigned?(shift_day)
-      shift_day.shift_assignments.exists?(work_type: "middle_shift")
+      shift_day.shift_assignments.exists?(work_type: 'middle_shift')
     end
 
     def middle_shift_candidate_employees_for(shift_day)
@@ -221,7 +221,7 @@ module ShiftGeneration
     def middle_shift_assignment_count(employee)
       ShiftAssignment.joins(:shift_day)
                      .where(employee: employee, shift_days: { shift_period_id: shift_period.id })
-                     .where(work_type: "middle_shift")
+                     .where(work_type: 'middle_shift')
                      .where.not(shift_days: { day_type: %w[saturday sunday holiday] })
                      .count
     end
@@ -244,12 +244,12 @@ module ShiftGeneration
             weekend_shift_day: shift_day,
             employee: employee,
             reverse: false,
-            work_type: "saturday_off"
+            work_type: 'saturday_off'
           )
 
           next if target_day.blank?
 
-          assign_rest_day(target_day, employee, "saturday_off")
+          assign_rest_day(target_day, employee, 'saturday_off')
           created_count += 1
         end
       end
@@ -266,12 +266,12 @@ module ShiftGeneration
             weekend_shift_day: shift_day,
             employee: employee,
             reverse: true,
-            work_type: "sunday_off"
+            work_type: 'sunday_off'
           )
 
           next if target_day.blank?
 
-          assign_rest_day(target_day, employee, "sunday_off")
+          assign_rest_day(target_day, employee, 'sunday_off')
           created_count += 1
         end
       end
@@ -288,12 +288,12 @@ module ShiftGeneration
             weekend_shift_day: shift_day,
             employee: employee,
             reverse: false,
-            work_type: "national_holiday"
+            work_type: 'national_holiday'
           )
 
           next if target_day.blank?
 
-          assign_rest_day(target_day, employee, "national_holiday")
+          assign_rest_day(target_day, employee, 'national_holiday')
           created_count += 1
         end
       end
@@ -320,11 +320,11 @@ module ShiftGeneration
                .map(&:employee)
     end
 
-    def find_weekday_for_compensation(weekend_shift_day:, employee:, reverse: false, work_type:)
+    def find_weekday_for_compensation(weekend_shift_day:, employee:, work_type:, reverse: false)
       candidate_days = compensation_candidate_days_for(weekend_shift_day, work_type)
 
-      if work_type == "saturday_off"
-        sunday_off_day = compensation_day_for(employee, weekend_shift_day, "sunday_off")
+      if work_type == 'saturday_off'
+        sunday_off_day = compensation_day_for(employee, weekend_shift_day, 'sunday_off')
 
         if sunday_off_day.present?
           candidate_days = candidate_days.select do |day|
@@ -364,7 +364,7 @@ module ShiftGeneration
 
     def compensation_candidate_days_for(weekend_shift_day, work_type)
       case work_type
-      when "saturday_off"
+      when 'saturday_off'
         week_start = weekend_shift_day.target_date.beginning_of_week(:monday)
         week_end   = weekend_shift_day.target_date.end_of_week(:monday)
 
@@ -374,7 +374,7 @@ module ShiftGeneration
             !weekend_or_holiday?(day) &&
             !day.target_date.monday?
         end
-      when "sunday_off"
+      when 'sunday_off'
         next_week_start = weekend_shift_day.target_date.next_week(:monday)
         next_week_end   = next_week_start.end_of_week(:monday)
 
@@ -384,7 +384,7 @@ module ShiftGeneration
             !weekend_or_holiday?(day) &&
             !day.target_date.monday?
         end
-      when "national_holiday"
+      when 'national_holiday'
         week_start = weekend_shift_day.target_date.beginning_of_week(:monday)
         week_end   = weekend_shift_day.target_date.end_of_week(:monday)
 
@@ -494,7 +494,7 @@ module ShiftGeneration
     end
 
     def assignable_regular_zones_for(employee)
-      employee.zones.where(active: true).where.not(name: "混合").order(:position, :id).to_a
+      employee.zones.where(active: true).where.not(name: '混合').order(:position, :id).to_a
     end
 
     def primary_zone_priority(employee, zone)
@@ -505,8 +505,8 @@ module ShiftGeneration
       counts =
         shift_day.shift_assignments
                  .joins(:zone)
-                 .where(work_type: "day_shift")
-                 .where.not(zones: { name: "混合" })
+                 .where(work_type: 'day_shift')
+                 .where.not(zones: { name: '混合' })
                  .group(:zone_id)
                  .count
 

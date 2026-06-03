@@ -1,14 +1,14 @@
-require "rails_helper"
+require 'rails_helper'
 
-RSpec.describe "ShiftAssignments", type: :request do
-  describe "割当管理" do
+RSpec.describe 'ShiftAssignments', type: :request do
+  describe '割当管理' do
     let(:user) { create(:user) }
 
     before do
       sign_in user
     end
 
-    it "未確定のシフト期間なら割当を登録できること" do
+    it '未確定のシフト期間なら割当を登録できること' do
       shift_period = create(:shift_period, user: user, start_date: Date.new(2026, 5, 1), end_date: Date.new(2026, 5, 1))
       zone = create(:zone)
       employee = create(:employee, :with_zone, user: user, assignable_zone: zone)
@@ -27,7 +27,7 @@ RSpec.describe "ShiftAssignments", type: :request do
       expect(response).to redirect_to(shift_period_path(shift_period))
     end
 
-    it "不正な割当は詳細画面を再表示すること" do
+    it '不正な割当は詳細画面を再表示すること' do
       shift_period = create(:shift_period, user: user, start_date: Date.new(2026, 5, 1), end_date: Date.new(2026, 5, 1))
       zone = create(:zone)
       employee = create(:employee, :with_zone, user: user, assignable_zone: zone)
@@ -45,10 +45,10 @@ RSpec.describe "ShiftAssignments", type: :request do
       end.not_to change(ShiftAssignment, :count)
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(response.body).to include("割当を更新できませんでした。入力内容を確認してください。")
+      expect(response.body).to include('割当を更新できませんでした。入力内容を確認してください。')
     end
 
-    it "割当を更新できること" do
+    it '割当を更新できること' do
       shift_period = create(:shift_period, user: user, start_date: Date.new(2026, 5, 1), end_date: Date.new(2026, 5, 1))
       zone = create(:zone)
       employee = create(:employee, :with_zone, user: user, assignable_zone: zone)
@@ -64,11 +64,11 @@ RSpec.describe "ShiftAssignments", type: :request do
       }
 
       expect(response).to redirect_to(shift_period_path(shift_period))
-      expect(assignment.reload.work_type).to eq("saturday_off")
+      expect(assignment.reload.work_type).to eq('saturday_off')
       expect(assignment.zone_id).to be_nil
     end
 
-    it "割当を削除できること" do
+    it '割当を削除できること' do
       shift_period = create(:shift_period, user: user, start_date: Date.new(2026, 5, 1), end_date: Date.new(2026, 5, 1))
       zone = create(:zone)
       employee = create(:employee, :with_zone, user: user, assignable_zone: zone)
@@ -82,7 +82,7 @@ RSpec.describe "ShiftAssignments", type: :request do
       expect(response).to redirect_to(shift_period_path(shift_period))
     end
 
-    it "マスト要員を外すとアラートが表示されること" do
+    it 'マスト要員を外すとアラートが表示されること' do
       shift_period = create(:shift_period, user: user, start_date: Date.new(2026, 5, 1), end_date: Date.new(2026, 5, 1))
       zone = create(:zone)
       required_employee = create(:employee, :with_zone, user: user, assignable_zone: zone, must_staff: true)
@@ -92,11 +92,12 @@ RSpec.describe "ShiftAssignments", type: :request do
       delete shift_day_shift_assignment_path(shift_day, assignment)
 
       follow_redirect!
-      expect(response.body).to include("マスト要員が未割当です")
+      expect(response.body).to include('マスト要員が未割当です')
     end
 
-    it "確定済みのシフト期間では割当を登録できないこと" do
-      shift_period = create(:shift_period, user: user, status: :locked, start_date: Date.new(2026, 5, 1), end_date: Date.new(2026, 5, 1))
+    it '確定済みのシフト期間では割当を登録できないこと' do
+      shift_period = create(:shift_period, user: user, status: :locked, start_date: Date.new(2026, 5, 1),
+                                           end_date: Date.new(2026, 5, 1))
       zone = create(:zone)
       employee = create(:employee, :with_zone, user: user, assignable_zone: zone)
       shift_day = shift_period.shift_days.first

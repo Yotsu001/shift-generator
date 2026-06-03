@@ -1,5 +1,5 @@
 namespace :shift_periods do
-  desc "既存のシフト期間に現在の土日・祝日判定を反映する"
+  desc '既存のシフト期間に現在の土日・祝日判定を反映する'
   task sync_day_types: :environment do
     total_updated = 0
     updated_periods = 0

@@ -5,44 +5,44 @@ class LeaveRequestsController < ApplicationController
 
   def create
     if @shift_day.shift_period.locked?
-      redirect_to shift_period_path(@shift_day.shift_period), alert: "確定済みのシフト期間では希望休を登録できません。"
+      redirect_to shift_period_path(@shift_day.shift_period), alert: '確定済みのシフト期間では希望休を登録できません。'
       return
     end
 
     @leave_request = @shift_day.leave_requests.new(leave_request_params)
 
     if @leave_request.save
-      redirect_to shift_period_path(@shift_day.shift_period), notice: "希望休を登録しました。"
+      redirect_to shift_period_path(@shift_day.shift_period), notice: '希望休を登録しました。'
     else
       prepare_shift_period_show_data
       @open_form_id = "leave-form-#{@leave_request.employee_id}-#{@shift_day.id}"
-      render "shift_periods/show", status: :unprocessable_content
+      render 'shift_periods/show', status: :unprocessable_content
     end
   end
 
   def update
     if @shift_day.shift_period.locked?
-      redirect_to shift_period_path(@shift_day.shift_period), alert: "確定済みのシフト期間では希望休を更新できません。"
+      redirect_to shift_period_path(@shift_day.shift_period), alert: '確定済みのシフト期間では希望休を更新できません。'
       return
     end
 
     if @leave_request.update(leave_request_params)
-      redirect_to shift_period_path(@shift_day.shift_period), notice: "希望休を更新しました。"
+      redirect_to shift_period_path(@shift_day.shift_period), notice: '希望休を更新しました。'
     else
       prepare_shift_period_show_data
       @open_form_id = "edit-leave-form-#{@leave_request.id}"
-      render "shift_periods/show", status: :unprocessable_content
+      render 'shift_periods/show', status: :unprocessable_content
     end
   end
 
   def destroy
     if @shift_day.shift_period.locked?
-      redirect_to shift_period_path(@shift_day.shift_period), alert: "確定済みのシフト期間では希望休を削除できません。"
+      redirect_to shift_period_path(@shift_day.shift_period), alert: '確定済みのシフト期間では希望休を削除できません。'
       return
     end
 
     @leave_request.destroy
-    redirect_to shift_period_path(@shift_day.shift_period), notice: "希望休を削除しました。"
+    redirect_to shift_period_path(@shift_day.shift_period), notice: '希望休を削除しました。'
   end
 
   private

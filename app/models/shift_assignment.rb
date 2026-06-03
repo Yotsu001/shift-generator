@@ -45,14 +45,14 @@ class ShiftAssignment < ApplicationRecord
 
     if day_shift? || night_shift?
       if weekend_or_holiday?
-        errors.add(:zone, "は土日祝勤務では指定できません") if zone.present?
-      else
-        errors.add(:zone, "を指定してください") if zone.blank?
+        errors.add(:zone, 'は土日祝勤務では指定できません') if zone.present?
+      elsif zone.blank?
+        errors.add(:zone, 'を指定してください')
       end
     elsif middle_shift?
-      errors.add(:zone, "は土日祝勤務では指定できません") if weekend_or_holiday? && zone.present?
+      errors.add(:zone, 'は土日祝勤務では指定できません') if weekend_or_holiday? && zone.present?
     elsif saturday_off? || sunday_off? || holiday? || national_holiday?
-      errors.add(:zone, "は指定できません") if zone.present?
+      errors.add(:zone, 'は指定できません') if zone.present?
     end
   end
 
@@ -62,7 +62,7 @@ class ShiftAssignment < ApplicationRecord
     return unless employee.respond_to?(:zones)
     return if employee.zones.include?(zone)
 
-    errors.add(:zone, "はこの従業員の担当可能区ではありません")
+    errors.add(:zone, 'はこの従業員の担当可能区ではありません')
   end
 
   def one_middle_shift_per_weekday
@@ -75,9 +75,9 @@ class ShiftAssignment < ApplicationRecord
     )
     relation = relation.where.not(id: id) if persisted?
 
-    if relation.exists?
-      errors.add(:work_type, "は平日で1人までです")
-    end
+    return unless relation.exists?
+
+    errors.add(:work_type, 'は平日で1人までです')
   end
 
   def weekend_work_type_limit
@@ -90,9 +90,9 @@ class ShiftAssignment < ApplicationRecord
     )
     relation = relation.where.not(id: id) if persisted?
 
-    if relation.exists?
-      errors.add(:work_type, "は土日祝で1人までです")
-    end
+    return unless relation.exists?
+
+    errors.add(:work_type, 'は土日祝で1人までです')
   end
 
   def cannot_assign_if_leave_requested
@@ -100,9 +100,9 @@ class ShiftAssignment < ApplicationRecord
     return if shift_day.blank?
     return unless day_shift? || middle_shift? || night_shift?
 
-    if LeaveRequest.exists?(employee_id: employee_id, shift_day_id: shift_day_id)
-      errors.add(:base, "希望休が登録されているため勤務を割り当てできません")
-    end
+    return unless LeaveRequest.exists?(employee_id: employee_id, shift_day_id: shift_day_id)
+
+    errors.add(:base, '希望休が登録されているため勤務を割り当てできません')
   end
 
   def employee_must_belong_to_shift_period_owner
@@ -110,7 +110,7 @@ class ShiftAssignment < ApplicationRecord
     return if shift_day.shift_period.blank?
     return if employee.user_id == shift_day.shift_period.user_id
 
-    errors.add(:employee, "はこのシフト期間の作成者に属するスタッフを選択してください")
+    errors.add(:employee, 'はこのシフト期間の作成者に属するスタッフを選択してください')
   end
 
   def weekend_or_holiday?

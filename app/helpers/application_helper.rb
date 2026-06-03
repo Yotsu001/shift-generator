@@ -1,7 +1,7 @@
 module ApplicationHelper
   SHIFT_PERIOD_STATUS_LABELS = {
-    "draft" => "案",
-    "locked" => "確定"
+    'draft' => '案',
+    'locked' => '確定'
   }.freeze
 
   def shift_period_status_label(shift_period_or_status)

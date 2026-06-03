@@ -23,14 +23,14 @@ RSpec.configure do |config|
     Warden.test_mode!
   end
   config.before(:context, type: :system) do
-    if ENV["SHOW_BROWSER"] == "1"
+    if ENV['SHOW_BROWSER'] == '1'
       driven_by(:visible_chrome)
     else
       driven_by(:rack_test)
     end
   end
   config.after(:each, type: :system) do
-    if ENV["SHOW_BROWSER"] == "1"
+    if ENV['SHOW_BROWSER'] == '1'
       browser = VisibleChromeSession.browser
 
       if browser
@@ -52,7 +52,7 @@ RSpec.configure do |config|
     Warden.test_reset!
   end
   config.after(:suite) do
-    VisibleChromeSession.cleanup! if ENV["SHOW_BROWSER"] == "1"
+    VisibleChromeSession.cleanup! if ENV['SHOW_BROWSER'] == '1'
   end
   config.before(:each, type: :request) do
     allow_any_instance_of(ApplicationController).to receive(:basic_auth).and_return(true)

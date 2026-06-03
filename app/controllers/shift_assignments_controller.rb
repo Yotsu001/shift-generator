@@ -5,7 +5,7 @@ class ShiftAssignmentsController < ApplicationController
 
   def create
     if @shift_day.shift_period.locked?
-      redirect_to shift_period_path(@shift_day.shift_period), alert: "確定済みのシフト期間では割当を登録できません。"
+      redirect_to shift_period_path(@shift_day.shift_period), alert: '確定済みのシフト期間では割当を登録できません。'
       return
     end
 
@@ -13,43 +13,43 @@ class ShiftAssignmentsController < ApplicationController
 
     if @shift_assignment.save
       redirect_to shift_period_path(@shift_day.shift_period),
-                  notice: "割当を登録しました。",
+                  notice: '割当を登録しました。',
                   alert: must_staff_alert_message
     else
       prepare_shift_period_show_data
       @open_form_id = "assignment-form-#{@shift_assignment.employee_id}-#{@shift_day.id}"
-      flash.now[:alert] = "割当を更新できませんでした。入力内容を確認してください。"
-      render "shift_periods/show", status: :unprocessable_content
+      flash.now[:alert] = '割当を更新できませんでした。入力内容を確認してください。'
+      render 'shift_periods/show', status: :unprocessable_content
     end
   end
 
   def update
     if @shift_day.shift_period.locked?
-      redirect_to shift_period_path(@shift_day.shift_period), alert: "確定済みのシフト期間では割当を更新できません。"
+      redirect_to shift_period_path(@shift_day.shift_period), alert: '確定済みのシフト期間では割当を更新できません。'
       return
     end
 
     if @shift_assignment.update(shift_assignment_params)
       redirect_to shift_period_path(@shift_day.shift_period),
-                  notice: "割当を更新しました。",
+                  notice: '割当を更新しました。',
                   alert: must_staff_alert_message
     else
       prepare_shift_period_show_data
       @open_form_id = "edit-assignment-form-#{@shift_assignment.id}"
-      flash.now[:alert] = "割当を更新できませんでした。入力内容を確認してください。"
-      render "shift_periods/show", status: :unprocessable_content
+      flash.now[:alert] = '割当を更新できませんでした。入力内容を確認してください。'
+      render 'shift_periods/show', status: :unprocessable_content
     end
   end
 
   def destroy
     if @shift_day.shift_period.locked?
-      redirect_to shift_period_path(@shift_day.shift_period), alert: "確定済みのシフト期間では割当を削除できません。"
+      redirect_to shift_period_path(@shift_day.shift_period), alert: '確定済みのシフト期間では割当を削除できません。'
       return
     end
 
     @shift_assignment.destroy
     redirect_to shift_period_path(@shift_day.shift_period),
-                notice: "割当を削除しました。",
+                notice: '割当を削除しました。',
                 alert: must_staff_alert_message
   end
 

@@ -16,32 +16,31 @@ class ShiftPeriodsController < ApplicationController
     @shift_period.status = :draft
 
     if @shift_period.save
-      redirect_to @shift_period, notice: "シフト期間を作成しました"
+      redirect_to @shift_period, notice: 'シフト期間を作成しました'
     else
       render :new, status: :unprocessable_content
     end
   end
 
-  def edit; end
+  def edit
+  end
 
   def update
     date_range_changed = shift_period_date_range_changed?
 
     ShiftPeriod.transaction do
-      if @shift_period.update(shift_period_update_params)
-        @shift_period.rebuild_shift_days! if date_range_changed
-      else
-        raise ActiveRecord::Rollback
-      end
+      raise ActiveRecord::Rollback unless @shift_period.update(shift_period_update_params)
+
+      @shift_period.rebuild_shift_days! if date_range_changed
     end
 
     if @shift_period.errors.any?
       render :edit, status: :unprocessable_content
     else
       notice = if date_range_changed
-                 "シフト期間を更新しました。日付範囲の変更に伴い、シフト表を再作成しました"
+                 'シフト期間を更新しました。日付範囲の変更に伴い、シフト表を再作成しました'
                else
-                 "シフト期間を更新しました"
+                 'シフト期間を更新しました'
                end
       redirect_to shift_periods_path, notice: notice
     end
@@ -49,12 +48,12 @@ class ShiftPeriodsController < ApplicationController
 
   def destroy
     if @shift_period.locked?
-      redirect_to shift_periods_path, alert: "確定済みのシフト期間は削除できません"
+      redirect_to shift_periods_path, alert: '確定済みのシフト期間は削除できません'
       return
     end
 
     @shift_period.destroy!
-    redirect_to shift_periods_path, notice: "シフト期間を削除しました"
+    redirect_to shift_periods_path, notice: 'シフト期間を削除しました'
   end
 
   def show
@@ -64,11 +63,11 @@ class ShiftPeriodsController < ApplicationController
   def generate
     ShiftGeneration::SimpleGenerator.new(@shift_period).call
     redirect_to @shift_period,
-                notice: "平日の自動割当を生成しました",
+                notice: '平日の自動割当を生成しました',
                 alert: must_staff_alert_message(@shift_period)
   rescue StandardError => e
     Rails.logger.error e.full_message
-    redirect_to @shift_period, alert: "自動生成に失敗しました"
+    redirect_to @shift_period, alert: '自動生成に失敗しました'
   end
 
   def clear_assignments
@@ -76,7 +75,7 @@ class ShiftPeriodsController < ApplicationController
                    .where(shift_days: { shift_period_id: @shift_period.id })
                    .delete_all
 
-    redirect_to shift_period_path(@shift_period), notice: "割当を全削除しました"
+    redirect_to shift_period_path(@shift_period), notice: '割当を全削除しました'
   end
 
   private
@@ -113,7 +112,7 @@ class ShiftPeriodsController < ApplicationController
   def prevent_locked_shift_period_actions
     return unless @shift_period.locked?
 
-    redirect_to shift_period_path(@shift_period), alert: "確定済みのシフト期間ではこの操作を実行できません"
+    redirect_to shift_period_path(@shift_period), alert: '確定済みのシフト期間ではこの操作を実行できません'
   end
 
   def prepare_show_resources
@@ -129,6 +128,8 @@ class ShiftPeriodsController < ApplicationController
     missing_days = shift_period.shift_days_missing_must_staff
     return if missing_days.blank?
 
-    "マスト要員を割り当てられない平日があります（#{missing_days.map { |day| day.target_date.strftime('%Y-%m-%d') }.join('、')}）。希望休などを優先した結果、未割当になっている可能性があります。"
+    "マスト要員を割り当てられない平日があります（#{missing_days.map do |day|
+      day.target_date.strftime('%Y-%m-%d')
+    end.join('、')}）。希望休などを優先した結果、未割当になっている可能性があります。"
   end
 end

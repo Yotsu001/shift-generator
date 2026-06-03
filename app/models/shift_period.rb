@@ -59,7 +59,7 @@ class ShiftPeriod < ApplicationRecord
     return if end_date.blank? || start_date.blank?
     return if end_date >= start_date
 
-    errors.add(:end_date, "は開始日以降の日付を選択してください")
+    errors.add(:end_date, 'は開始日以降の日付を選択してください')
   end
 
   def generate_shift_days
